@@ -1,0 +1,95 @@
+{
+  "ZKSYNC": {
+    "gas_token": "ETH",
+    "poa": false,
+    "eip1599": false,
+    "stargate_usdc_pool": 1,
+    "chain_id": 324,
+    "rpc": "http://65.109.24.46:8011",
+    "scan": "https://explorer.zksync.io/tx",
+    "transaction_sleep_interval": {
+      "from": 0,
+      "to": 0
+    }
+  },
+  "BASE": {
+    "gas_token": "ETH",
+    "poa": false,
+    "eip1599": false,
+    "stargate_usdc_pool": 1,
+    "stargate_eth_pool": 13,
+    "chain_id": 1324,
+    "rpc": "http://65.109.24.46:8543",
+    "scan": "https://explorer.zksync.io/tx",
+    "gas_price_gwei": 2,
+    "l1_gas_price_gwei": 2,
+    "transaction_sleep_interval": {
+      "from": 0,
+      "to": 0
+    }
+  },
+  "LINEA": {
+    "gas_token": "ETH",
+    "poa": false,
+    "eip1599": false,
+    "stargate_usdc_pool": 1,
+    "stargate_eth_pool": 13,
+    "chain_id": 559144,
+    "stargate_chain_id": 10157,
+    "rpc": "http://localhost:8545/",
+    "scan": "http://localhost:4000/tx",
+    "gas_price_gwei": 2,
+    "l1_gas_price_gwei": 2,
+    "max_l0_fee": 0.0008,
+    "transaction_sleep_interval": {
+      "from": 0,
+      "to": 0
+    }
+  },
+  "ARBITRUM": {
+    "gas_token": "ETH",
+    "poa": false,
+    "eip1599": false,
+    "usdc_pool": 1,
+    "stargate_usdc_pool": 1,
+    "transaction_sleep_interval": {
+      "from": 0,
+      "to": 0
+    }
+  },
+  "BSC": {
+    "gas_token": "BNB",
+    "poa": false,
+    "eip1599": false,
+    "usdc_pool": 2,
+    "stargate_usdc_pool": 1
+  },
+  "FANTOM": {
+    "gas_token": "FTM",
+    "poa": false,
+    "eip1599": false,
+    "usdc_pool": 1,
+    "stargate_usdc_pool": 21
+  },
+  "OPTIMISM": {
+    "gas_token": "ETH",
+    "poa": false,
+    "eip1599": false,
+    "usdc_pool": 1,
+    "stargate_usdc_pool": 1
+  },
+  "POLYGON": {
+    "gas_token": "MATIC",
+    "poa": true,
+    "eip1599": false,
+    "usdc_pool": 1,
+    "stargate_usdc_pool": 1
+  },
+  "AVALANCHE": {
+    "gas_token": "AVAX",
+    "poa": true,
+    "eip1599": false,
+    "usdc_pool": 1,
+    "stargate_usdc_pool": 1
+  }
+}
