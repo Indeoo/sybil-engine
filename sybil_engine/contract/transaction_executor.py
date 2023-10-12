@@ -1,6 +1,7 @@
 from loguru import logger
 from web3 import Web3
 
+from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
 from sybil_engine.utils.gas_utils import verify_gas_price, GasPriceToHigh
 from sybil_engine.utils.l0_utils import NativeFeeToHigh

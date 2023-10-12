@@ -2,6 +2,7 @@ from sybil_engine.config.app_config import get_module_data
 
 chains = ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA']
 
+
 class ValidationException(Exception):
     def __init__(self, invalid_value, message, type=''):
         self.message = f'Invalid {type} value \'{invalid_value}\'. Possible values: {message}'
@@ -88,4 +89,4 @@ def is_dex(dex):
     if not isinstance(dex, str):
         return False
 
-    return dex in dex_apps
+    return dex in get_module_data().get_swap_apps()
