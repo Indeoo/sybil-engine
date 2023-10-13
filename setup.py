@@ -1,8 +1,11 @@
 from setuptools import setup, find_packages
 
+with open("requirements.txt", "r", encoding="utf-8") as file:
+    requirements = file.readlines()
+
 setup(
     name='sybil_engine',
-    version='1.0.4',
+    version='1.0.5',
     py_modules=['sybil_engine'],
     packages=find_packages(),
     install_requires=[
