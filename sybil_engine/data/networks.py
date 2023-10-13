@@ -8,7 +8,7 @@ ids_chain = {
     42161: 'ARBITRUM',
     59144: 'LINEA',
     8453: 'BASE',
-    1324: 'BASE',
+    18453: 'BASE',
     56: 'BSC',
     250: 'FANTOM',
     10: 'OPTIMISM',

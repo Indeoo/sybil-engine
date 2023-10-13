@@ -4,7 +4,9 @@ from itertools import zip_longest
 from eth_account import Account
 from web3 import Web3
 
+from sybil_engine.utils.decryptor import decrypt_private_key
 from sybil_engine.utils.file_loader import load_file_rows
+from sybil_engine.utils.utils import ConfigurationException
 
 
 def create_app_accounts(private_keys, proxy_config, cex_addresses, starknet_addresses, password, encryption):
