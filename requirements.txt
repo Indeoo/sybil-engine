@@ -1,0 +1,10 @@
+loguru==0.7.2
+setuptools==68.2.2
+ccxt==4.1.11
+tqdm==4.66.1
+cryptography==41.0.4
+web3==6.11.0
+requests==2.31.0
+pyTelegramBotAPI==4.14.0
+python-okx==0.2.2
+termcolor==2.3.0
