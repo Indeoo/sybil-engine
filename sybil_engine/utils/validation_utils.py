@@ -1,4 +1,5 @@
 from sybil_engine.config.app_config import get_module_data
+from sybil_engine.utils.utils import ConfigurationException
 
 chains = ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA']
 
@@ -71,6 +72,9 @@ def is_token(token):
 
 
 def validate_dex_list(dex_list):
+    if len(dex_list) == 0:
+        raise ConfigurationException("Dex list is empty")
+
     dex_apps = get_module_data().get_swap_apps()
 
     for dex in dex_list:
