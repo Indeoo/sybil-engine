@@ -82,7 +82,7 @@ def get_native_balance_for_params(account, web3, chain, token):
 
 
 def find_chain_with_max_usdc(account_data):
-    max_usdc_balance = max(account_da2ta, key=lambda x: x[1].wei_compare())
+    max_usdc_balance = max(account_data, key=lambda x: x[1].wei_compare())
 
     if max_usdc_balance[1] == 0:
         raise Exception("Can't bridge tokens, all chain USDC balances are zero")
