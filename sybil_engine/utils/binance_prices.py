@@ -9,9 +9,7 @@ def get_binance_price(symbol):
         return 1
 
     BASE_URL = "https://api.binance.com/api/v3/ticker/price"
-    params = {
-        "symbol": symbol
-    }
+    params = {"symbol": symbol}
 
     response = requests.get(BASE_URL, params=params)
 
