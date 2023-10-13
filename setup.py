@@ -5,12 +5,10 @@ with open("requirements.txt", "r", encoding="utf-8") as file:
 
 setup(
     name='sybil_engine',
-    version='1.0.5',
+    version='1.0.7',
     py_modules=['sybil_engine'],
     packages=find_packages(),
-    install_requires=[
-        # List your dependencies here
-    ],
+    install_requires=requirements,
     author='Arsenii Venherak',
     author_email='indeooars@gmail.com',
     description='Engine for web3 smart contracts automatisation.',
