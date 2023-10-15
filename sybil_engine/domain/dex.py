@@ -2,6 +2,9 @@ from loguru import logger
 
 from sybil_engine.config.app_config import get_dex_retry_interval
 from sybil_engine.contract.transaction_executor import TransactionExecutionException, execute_transaction
+from sybil_engine.data.contracts import get_contracts_for_chain
+from sybil_engine.data.tokens import get_tokens_for_chain
+from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
 from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException
 
@@ -10,9 +13,9 @@ class Dex:
     dex_name = None
     swap_contract = None
 
-    def __init__(self, chain_contracts, tokens, chain_instance, web3, sleep_interval=None):
-        self.chain_contracts = chain_contracts
-        self.tokens = tokens
+    def __init__(self, chain_instance, web3, sleep_interval=None):
+        self.chain_contracts = get_contracts_for_chain(chain_instance['chain'])
+        self.tokens = get_tokens_for_chain(chain_instance['chain'])
         self.chain_instance = chain_instance
         self.web3 = web3
 
@@ -22,6 +25,11 @@ class Dex:
             self.sleep_interval = sleep_interval
 
     def swap(self, amount_to_swap, from_token, to_token, slippage, account):
+        if amount_to_swap.wei == 0 and amount_to_swap.token != self.chain_instance['gas_token']:
+            raise NotEnoughERC20Balance(f"Can't swap {amount_to_swap.log_line()}")
+
+        logger.info(f"Swap {amount_to_swap.log_line()}->{to_token} in {self.dex_name} ({self.chain_instance['chain']})")
+
         from_token_address = self.tokens[from_token]
         to_token_address = self.tokens[to_token]
 
@@ -31,7 +39,7 @@ class Dex:
             erc20_token = Erc20Token(self.chain_instance['chain'], from_token, self.web3)
             balance = erc20_token.balance(account)
             if balance.wei < amount_to_swap.wei:
-                raise AccountException(f"Balance {balance.log_line()} < {amount_to_swap.log_line()}")
+                raise AccountException(f"Balance {balance.log_line()}<-{amount_to_swap.log_line()}")
 
             swap_contract = self.chain_contracts[self.swap_contract]
 
