@@ -6,9 +6,8 @@ from sybil_engine.data.networks import get_chain_instance
 from sybil_engine.data.pairs import Pairs
 from sybil_engine.data.tokens import get_tokens_for_chain
 from sybil_engine.utils.web3_utils import init_web3
-
-from core.modules.swap.swap_facade import swap_facade
-from tests.core.modules import init_set_test_config
+from test import init_set_test_config
+from test.module.swap.mock_test_swap_facade import swap_facade
 
 
 class TestSwapFacade(unittest.TestCase):
