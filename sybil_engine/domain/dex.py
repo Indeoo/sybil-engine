@@ -1,3 +1,5 @@
+import functools
+
 from loguru import logger
 
 from sybil_engine.config.app_config import get_dex_retry_interval
@@ -7,6 +9,27 @@ from sybil_engine.data.tokens import get_tokens_for_chain
 from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
 from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException
+
+
+def retry_swap(max_retries=3, exception_type=TransactionExecutionException):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(self, *args, **kwargs):
+            for retry in range(max_retries):
+                try:
+                    return func(self, *args, **kwargs)
+                except exception_type as e:
+                    if retry == max_retries - 1:  # if it's the last retry
+                        raise SwapException(str(e))
+                    else:
+                        logger.error(str(e))
+                        logger.error(f"Error during attempt {retry + 1}/{max_retries}: {e}. Retrying...")
+                        randomized_sleeping(self.sleep_interval)
+            return None
+
+        return wrapper
+
+    return decorator
 
 
 class Dex:
@@ -24,6 +47,7 @@ class Dex:
         else:
             self.sleep_interval = sleep_interval
 
+    @retry_swap(max_retries=3, exception_type=TransactionExecutionException)
     def swap(self, amount_to_swap, from_token, to_token, slippage, account):
         if amount_to_swap.wei == 0 and amount_to_swap.token != self.chain_instance['gas_token']:
             raise NotEnoughERC20Balance(f"Can't swap {amount_to_swap.log_line()}")
@@ -55,6 +79,9 @@ class Dex:
 
         execute_transaction(func, args, self.chain_instance, account, self.web3)
 
+    def swap_with_retry(self, amount_to_swap, from_token, to_token, slippage, account):
+        return self.swap(amount_to_swap, from_token, to_token, slippage, account)
+
     def swap_token_for_native(self, account, amount_to_swap, from_token_address, slippage):
         raise SwapException("Not supported yet")
 
@@ -66,17 +93,3 @@ class Dex:
 
     def get_amount_out_min(self, amount_to_swap, from_token_address, to_token_address):
         raise SwapException("Not supported yet")
-
-    def swap_with_retry(self, amount_to_swap, from_token, to_token, slippage, account, max_retries=3):
-        for retry in range(max_retries):
-            try:
-                return self.swap(amount_to_swap, from_token, to_token, slippage, account)
-            except TransactionExecutionException as e:
-                if retry == max_retries - 1:  # if it's the last retry
-                    raise SwapException(str(e))  # raise the exception to be handled by the calling code
-                else:
-                    logger.error(str(e))
-                    logger.error(f"Error during attempt {retry + 1}/{max_retries}: {e}. Retrying...")
-                    randomized_sleeping(self.sleep_interval)
-                    continue
-        return None
