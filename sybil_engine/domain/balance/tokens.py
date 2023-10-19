@@ -1,3 +1,5 @@
+import inspect
+
 from sybil_engine.contract.erc20contract import Erc20Contract
 from sybil_engine.contract.weth import WETH
 from sybil_engine.data.tokens import get_tokens_for_chain
@@ -15,7 +17,14 @@ class Erc20Token:
         return Erc20Balance(self.erc20_contract.balance_of(account), self.chain, self.token)
 
     def approve(self, account, contract_on_approve):
-        return self.erc20_contract.approve(account, contract_on_approve)
+        caller_frame = inspect.currentframe().f_back
+        caller_function = caller_frame.f_code.co_name
+        if caller_function == 'execute_transaction_internal':
+            original_function = self.erc20_contract.approve.__wrapped__ if hasattr(self.erc20_contract.approve,
+                                                                                   "__wrapped__") else self.erc20_contract.approve
+            return original_function(self.erc20_contract, account, contract_on_approve)
+        else:
+            return self.erc20_contract.approve(account, contract_on_approve)
 
     def allowance(self, account, allowance_contract):
         return self.erc20_contract.allowance(account, allowance_contract)

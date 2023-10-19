@@ -68,10 +68,7 @@ class Dex:
             swap_contract = self.chain_contracts[self.swap_contract]
 
             if erc20_token.allowance(account, swap_contract) < amount_to_swap.wei:
-                if hasattr(erc20_token.approve, "__wrapped__"):
-                    erc20_token.approve(account, swap_contract)
-                else:
-                    execute_transaction(erc20_token.approve, [account, swap_contract], self.chain_instance, account)
+                erc20_token.approve(account, swap_contract)
 
             if to_token == 'ETH':
                 args, func = self.swap_token_for_native(account, amount_to_swap, from_token_address, slippage)
