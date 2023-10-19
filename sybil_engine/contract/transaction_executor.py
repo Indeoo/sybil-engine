@@ -6,10 +6,28 @@ from sybil_engine.utils.fee_storage import add_fee
 from sybil_engine.utils.gas_utils import check_gas_price
 from sybil_engine.utils.l0_utils import NativeFeeToHigh
 from sybil_engine.utils.opti_utils import wait_for_optimism
-from sybil_engine.utils.utils import randomized_sleeping
+from sybil_engine.utils.utils import randomized_sleeping, deprecated
+
+from functools import wraps
 
 
+def evm_transaction(func):
+    @wraps(func)
+    def wrapper(instance, account, *args):
+        chain_instance = instance.chain_instance
+        web3 = instance.web3
+        args = instance, account, * args
+
+        return execute_transaction_internal(func, args, chain_instance, account, web3)
+    return wrapper
+
+
+@deprecated
 def execute_transaction(func, args, chain_instance, account, web3=None):
+    return execute_transaction_internal(func, args, chain_instance, account, web3)
+
+
+def execute_transaction_internal(func, args, chain_instance, account, web3=None):
     if web3 is None:
         web3 = func.__self__.web3
 
@@ -46,10 +64,26 @@ def execute_transaction(func, args, chain_instance, account, web3=None):
     return tx_hash
 
 
+def evm_starknet_transaction(func):
+    @wraps(func)
+    def wrapper(instance, account, *args):
+        chain_instance = instance.chain_instance
+        web3 = instance.web3
+        args = instance, account, * args
+
+        return execute_starknet_bridge_transaction_internal(func, args, chain_instance, account, web3)
+    return wrapper
+
+
+@deprecated
 def execute_starknet_bridge_transaction(func, args, chain_instance, account, web3):
+    return execute_starknet_bridge_transaction_internal(account, args, chain_instance, func, web3)
+
+
+def execute_starknet_bridge_transaction_internal(account, args, chain_instance, func, web3):
     while True:
         try:
-            tx_hash = execute_transaction(func, args, chain_instance, account, web3)
+            tx_hash = execute_transaction_internal(func, args, chain_instance, account, web3)
 
             logger.info(f'>>> https://starkscan.co/contract/{account.starknet_address}#token-transfers')
 
