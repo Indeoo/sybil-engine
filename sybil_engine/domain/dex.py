@@ -8,7 +8,7 @@ from sybil_engine.data.contracts import get_contracts_for_chain
 from sybil_engine.data.tokens import get_tokens_for_chain
 from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
-from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException
+from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException, deprecated
 
 
 def retry_swap(max_retries=3, exception_type=TransactionExecutionException):
@@ -78,6 +78,7 @@ class Dex:
 
         execute_transaction(func, args, self.chain_instance, account)
 
+    @deprecated
     def swap_with_retry(self, amount_to_swap, from_token, to_token, slippage, account):
         return self.swap(amount_to_swap, from_token, to_token, slippage, account)
 

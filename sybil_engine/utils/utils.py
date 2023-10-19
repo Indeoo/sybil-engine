@@ -1,5 +1,6 @@
 import time
 
+from loguru import logger
 from tqdm import tqdm
 import random
 
@@ -24,6 +25,13 @@ def interval_to_int(interval):
 
 def interval_to_round(interval):
     return round(random.uniform(interval['from'], interval['to']), 6)
+
+
+def deprecated(func):
+    def new_func(*args, **kwargs):
+        logger.warning(f"Call to deprecated function {func.__name__}", category=DeprecationWarning, stacklevel=2)
+        return func(*args, **kwargs)
+    return new_func
 
 
 class AccountException(Exception):
