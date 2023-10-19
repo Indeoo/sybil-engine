@@ -2,7 +2,6 @@ from loguru import logger
 from web3 import Web3
 
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance, Erc20Balance, WETHBalance, NativeBalance
-from sybil_engine.domain.balance.tokens import Erc20Token, WETHToken
 from sybil_engine.utils.utils import interval_to_round
 
 
@@ -51,6 +50,8 @@ def amount_to_swap_for_pair(account, chain, min_native_balance, native_balance, 
 
 
 def interval_to_erc20_balance(erc20_interval, account, token, chain, web3):
+    from sybil_engine.domain.balance.tokens import Erc20Token
+
     if erc20_interval == 'all_balance':
         return Erc20Token(chain, token, web3).balance(account)
     else:
@@ -58,6 +59,8 @@ def interval_to_erc20_balance(erc20_interval, account, token, chain, web3):
 
 
 def interval_to_weth_balance(erc20_interval, account, chain, web3):
+    from sybil_engine.domain.balance.tokens import WETHToken
+
     if erc20_interval == 'all_balance':
         return WETHToken(chain, web3).balance(account)
     else:
