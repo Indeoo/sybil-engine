@@ -7,6 +7,7 @@ ids_chain = {
     260: 'ZKSYNC',  # LOCAL
     42161: 'ARBITRUM',
     59144: 'LINEA',
+    559144: 'LINEA', # LOCAL
     8453: 'BASE',
     18453: 'BASE',
     56: 'BSC',
