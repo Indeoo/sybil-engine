@@ -3,47 +3,44 @@ from web3 import Web3
 
 from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
-from sybil_engine.utils.gas_utils import verify_gas_price, GasPriceToHigh
+from sybil_engine.utils.gas_utils import check_gas_price
 from sybil_engine.utils.l0_utils import NativeFeeToHigh
 from sybil_engine.utils.opti_utils import wait_for_optimism
 from sybil_engine.utils.utils import randomized_sleeping
 
 
 def execute_transaction(func, args, chain_instance, account, web3):
-    while True:
-        try:
-            gas_price_wei = verify_gas_price(chain_instance, web3)
-            contract_txn = func(*args)
+    gas_price_wei = check_gas_price(chain_instance, web3)
 
-            if 'gas' not in contract_txn:
-                contract_txn['gas'] = web3.eth.estimate_gas(contract_txn)
+    try:
+        contract_txn = func(*args)
 
-            signed_txn = web3.eth.account.sign_transaction(contract_txn, private_key=account.key)
-            tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-            randomized_sleeping(chain_instance['transaction_sleep_interval'])
+        if 'gas' not in contract_txn:
+            contract_txn['gas'] = web3.eth.estimate_gas(contract_txn)
 
-            wait_for_optimism(chain_instance)
+        signed_txn = web3.eth.account.sign_transaction(contract_txn, private_key=account.key)
+        tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        randomized_sleeping(chain_instance['transaction_sleep_interval'])
 
-            web3.eth.wait_for_transaction_receipt(tx_hash)
+        wait_for_optimism(chain_instance)
 
-            logger.info(f">>> {chain_instance['scan']}/{Web3.to_hex(tx_hash)}")
-            tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
+        web3.eth.wait_for_transaction_receipt(tx_hash)
 
-            transaction_status = tx_receipt['status']
-            if transaction_status == 0:
-                raise TransactionExecutionException("Transaction failed.")
+        logger.info(f">>> {chain_instance['scan']}/{Web3.to_hex(tx_hash)}")
+        tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
 
-            transaction_price_wei = tx_receipt['gasUsed'] * gas_price_wei
-            logger.info(f"Transaction fee: {from_wei_to_eth(transaction_price_wei)} {chain_instance['gas_token']}")
+        transaction_status = tx_receipt['status']
+        if transaction_status == 0:
+            raise TransactionExecutionException("Transaction failed.")
+    except Exception as e:
+        raise TransactionExecutionException(e)
 
-            add_fee(chain_instance['gas_token'], transaction_price_wei)
-            return tx_hash
+    transaction_price_wei = tx_receipt['gasUsed'] * gas_price_wei
+    logger.info(f"Transaction fee: {from_wei_to_eth(transaction_price_wei)} {chain_instance['gas_token']}")
 
-        except GasPriceToHigh as e:
-            logger.info(e)
-            randomized_sleeping({'from': 60 * 4, 'to': 60 * 8})
-        except Exception as e:
-            raise TransactionExecutionException(e)
+    add_fee(chain_instance['gas_token'], transaction_price_wei)
+
+    return tx_hash
 
 
 def execute_starknet_bridge_transaction(func, args, chain_instance, account, web3):
