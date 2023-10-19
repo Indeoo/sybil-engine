@@ -6,7 +6,7 @@ class GenericSwapFacade:
         slippage_coef = 1 - pair['slippage'] * 0.01
 
         dex = self.get_dex(pair, swap_app, chain_instance, web3)
-        dex.swap_with_retry(amount_to_swap, from_token, to_token, slippage_coef, account)
+        dex.swap(amount_to_swap, from_token, to_token, slippage_coef, account)
 
     def get_dex(self, pair, swap_app, chain_instance, web3):
         dex_class, additional_args = self.get_dex_classes(pair).get(swap_app, (None, None))

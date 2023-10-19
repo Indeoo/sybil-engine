@@ -36,7 +36,7 @@
     "stargate_eth_pool": 13,
     "chain_id": 559144,
     "stargate_chain_id": 10157,
-    "rpc": "http://localhost:8545/",
+    "rpc": "http://65.109.24.46:8541/",
     "scan": "http://localhost:4000/tx",
     "gas_price_gwei": 2,
     "l1_gas_price_gwei": 2,
