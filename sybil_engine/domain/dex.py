@@ -68,8 +68,7 @@ class Dex:
             swap_contract = self.chain_contracts[self.swap_contract]
 
             if erc20_token.allowance(account, swap_contract) < amount_to_swap.wei:
-                execute_transaction(erc20_token.approve, [account, swap_contract], self.chain_instance, account,
-                                    self.web3)
+                execute_transaction(erc20_token.approve, [account, swap_contract], self.chain_instance, account)
 
             if to_token == 'ETH':
                 args, func = self.swap_token_for_native(account, amount_to_swap, from_token_address, slippage)
@@ -77,7 +76,7 @@ class Dex:
                 args, func = self.swap_token_for_token(account, amount_to_swap, slippage, from_token_address,
                                                        to_token_address)
 
-        execute_transaction(func, args, self.chain_instance, account, self.web3)
+        execute_transaction(func, args, self.chain_instance, account)
 
     def swap_with_retry(self, amount_to_swap, from_token, to_token, slippage, account):
         return self.swap(amount_to_swap, from_token, to_token, slippage, account)

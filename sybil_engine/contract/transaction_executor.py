@@ -9,7 +9,10 @@ from sybil_engine.utils.opti_utils import wait_for_optimism
 from sybil_engine.utils.utils import randomized_sleeping
 
 
-def execute_transaction(func, args, chain_instance, account, web3):
+def execute_transaction(func, args, chain_instance, account, web3=None):
+    if web3 is None:
+        web3 = func.__self__.web3
+
     gas_price_wei = check_gas_price(chain_instance, web3)
 
     try:
