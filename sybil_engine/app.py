@@ -4,6 +4,7 @@ from loguru import logger
 from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
 from sybil_engine.module.module_executor import execute_modules
+from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str
 from sybil_engine.utils.app_account_utils import create_app_accounts
 from sybil_engine.utils.arguments_parser import parse_arguments
 from sybil_engine.utils.fee_storage import print_fee
@@ -70,16 +71,14 @@ def launch_app(args, module_config, config):
     if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
         raise ConfigurationException("Non-existing module is used")
 
-    skipped_accs = process_accounts(accounts, okx_secret, min_native_interval, modules, okx, sleep_interval)
+    process_accounts(accounts, okx_secret, min_native_interval, modules, okx, sleep_interval)
 
-    logger.info(f"Failed accounts: {skipped_accs}")
     print_fee()
+    print_accumulated()
 
 
 def process_accounts(app_accounts, okx_secret, min_native_interval, modules, okx_config, sleep_interval):
     logger.info(f"Loaded {len(app_accounts)} accounts")
-
-    skipped_accs = []
 
     for index, account in enumerate(app_accounts, 1):
         logger.info(f"[{index}/{len(app_accounts)}][{account.app_id}] {account.address}")
@@ -90,9 +89,7 @@ def process_accounts(app_accounts, okx_secret, min_native_interval, modules, okx
             execute_modules(okx_secret, sleep_interval, modules, account, okx_config, min_native_balance)
         except AccountException as e:
             logger.error(f'Error, skip account {account}: {e}')
-            skipped_accs.append(account)
+            add_accumulator_str("Failed accounts: ", account)
         except Exception as e:
             logger.error(f'Error, skip account {account}: {e}')
-            skipped_accs.append(account)
-
-    return skipped_accs
+            add_accumulator_str("Failed accounts: ", account)

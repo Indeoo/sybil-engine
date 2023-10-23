@@ -2,6 +2,7 @@ import unittest
 
 from loguru import logger
 from sybil_engine.app import process_accounts
+from sybil_engine.utils.accumulator import get_value
 from test import zksync_test_account
 
 from test.module.mock_fail_module import MockFailModule
@@ -45,9 +46,12 @@ class TestApp(unittest.TestCase):
         modules, encryption, min_native_interval, proxy_config, okx_config, sleep_interval, swap_retry_sleep_interval, gas_prices_gwei = create_config()
 
         try:
+            process_accounts([zksync_test_account], None, min_native_interval, [(MockFailModule, {})], okx_config,
+                             sleep_interval)
+
             self.assertEqual(
                 [zksync_test_account],
-                process_accounts([zksync_test_account], None, min_native_interval, [(MockFailModule, {})], okx_config,
-                                 sleep_interval))
+                get_value("Failed accounts: ")
+            )
         except Exception as e:
             self.fail(f"Some function raised an exception: {e}")
