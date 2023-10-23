@@ -39,6 +39,9 @@ class Balance:
             self.token
         )
 
+    def __str__(self):
+        return self.log_line()
+
 
 class NativeBalance(Balance):
     def __init__(self, wei_balance, chain, token):

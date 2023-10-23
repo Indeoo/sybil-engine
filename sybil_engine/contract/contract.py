@@ -10,14 +10,18 @@ class Contract:
         if abi is not None:
             self.contract = web3.eth.contract(address=contract_address, abi=abi)
 
-    def build_generic_data(self, sender):
-        return {
+    def build_generic_data(self, sender, set_contract_address=True):
+        txn_data = {
             "chainId": self.web3.eth.chain_id,
             'from': sender,
-            'to': self.contract_address,
             'nonce': self.web3.eth.get_transaction_count(sender),
             'gasPrice': self.web3.eth.gas_price,
         }
+
+        if set_contract_address:
+            txn_data['to'] = self.contract_address
+
+        return txn_data
 
     def build_txn_params(self, from_chain_instance, from_address, gas_price_wei):
         nonce = self.web3.eth.get_transaction_count(from_address)
