@@ -32,10 +32,18 @@ def create_app_account_with_proxies(cex_addresses, encryption, password, private
 
     accs_tulpe = list(zip_longest(private_keys, cex_addresses, proxies, starknet_addresses))
     app_accounts = []
+    seen_private_keys = set()
+
     for index, (private_key, cex_address, proxy, starknet_address) in enumerate(accs_tulpe, start=1):
         if private_key.startswith(('#',)):
             continue
         else:
+            if private_key.__contains__(":"):
+                rage_acc_id, private_key = private_key.split(' : ')
+                if private_key in seen_private_keys:
+                    continue
+                seen_private_keys.add(private_key)
+
             if encryption:
                 private_key = decrypt_private_key(private_key, password)
 
