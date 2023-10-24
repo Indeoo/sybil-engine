@@ -8,6 +8,7 @@ from sybil_engine.data.contracts import get_contracts_for_chain
 from sybil_engine.data.tokens import get_tokens_for_chain
 from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
+from sybil_engine.utils.gas_utils import l1_gas_price
 from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException, deprecated
 
 
@@ -48,6 +49,7 @@ class Dex:
             self.sleep_interval = sleep_interval
 
     @retry_swap(max_retries=3, exception_type=TransactionExecutionException)
+    @l1_gas_price
     def swap(self, amount_to_swap, from_token, to_token, slippage, account):
         if amount_to_swap.wei == 0 and amount_to_swap.token != self.chain_instance['gas_token']:
             raise NotEnoughERC20Balance(f"Can't swap {amount_to_swap.log_line()}")
