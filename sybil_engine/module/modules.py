@@ -1,8 +1,13 @@
 class GenericModules:
-    def get_module_config_by_name(self, module_name):
+    def get_module_config_by_name(self, module_name, module_map):
         for key, (module_class, config) in self.get_module_map().items():
             if module_class and (module_class.module_name == module_name):
-                return config
+                if config is None:
+                    return {}
+                elif isinstance(config, str):
+                    return module_map[config]
+                else:
+                    return config
         return 0
 
     def get_module_class_by_name(self, module_name):
