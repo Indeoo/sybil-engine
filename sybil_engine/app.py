@@ -7,6 +7,7 @@ from sybil_engine.module.module_executor import execute_modules
 from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str
 from sybil_engine.utils.app_account_utils import create_app_accounts
 from sybil_engine.utils.arguments_parser import parse_arguments
+from sybil_engine.utils.configuration_loader import load_config_maps
 from sybil_engine.utils.fee_storage import print_fee
 from sybil_engine.utils.logs import load_logger
 from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot
@@ -14,12 +15,19 @@ from sybil_engine.utils.utils import ConfigurationException, AccountException
 from sybil_engine.utils.wallet_loader import load_addresses
 
 
+def prepare_launch_without_data(modules_data):
+    config_map, module_map = load_config_maps()
+    prepare_launch(config_map, module_map, modules_data)
+
+
 def prepare_launch(config_map, module_map, modules_data):
+    args = parse_arguments(config_map['password'], module_map['module'])
+
     set_telegram_api_chat_id(config_map['telegram_api_chat_id'])
     set_telegram_api_key(config_map['telegram_api_key'])
 
     load_logger(send_to_bot, config_map['telegram_enabled'], config_map['telegram_log_level'])
-    args = parse_arguments(config_map['password'], module_map['module'])
+
     module_config = module_map['scenario_config'] if args.module == 'SCENARIO' else {
         'scenario_name': args.module,
         'scenario': [
