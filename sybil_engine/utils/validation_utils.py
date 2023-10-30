@@ -1,9 +1,6 @@
 from sybil_engine.config.app_config import get_module_data
 from sybil_engine.utils.utils import ConfigurationException
 
-chains = ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA']
-
-
 class ValidationException(Exception):
     def __init__(self, invalid_value, message, type=''):
         self.message = f'Invalid {type} value \'{invalid_value}\'. Possible values: {message}'
@@ -12,14 +9,14 @@ class ValidationException(Exception):
 
 def validate_chain(chain):
     if not is_chain(chain):
-        raise ValidationException(chain, f'Possible values: {chains}', type='chain')
+        raise ValidationException(chain, f'Possible values: {get_module_data().get_supported_chains()}', type='chain')
 
 
 def is_chain(chain_str):
     if not isinstance(chain_str, str):
         return False
 
-    return chain_str in chains
+    return chain_str in get_module_data().get_supported_chains()
 
 
 def validate_interval(interval):

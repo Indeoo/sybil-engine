@@ -24,3 +24,6 @@ class GenericModules:
 
     def get_swap_apps(self):
         pass
+
+    def get_supported_chains(self):
+        pass
