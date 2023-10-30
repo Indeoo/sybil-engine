@@ -1,4 +1,5 @@
 from sybil_engine.contract.contract import Contract
+from sybil_engine.contract.transaction_executor import evm_transaction
 from sybil_engine.utils.file_loader import load_abi
 
 abi = load_abi("resources/abi/weth.json")
@@ -8,7 +9,8 @@ class WETH(Contract):
     def __init__(self, contract_address, web3):
         super().__init__(contract_address, web3, abi)
 
-    def deposit(self, amount_to_swap, account):
+    @evm_transaction
+    def deposit(self, account, amount_to_swap):
         sender = account.address
 
         txn_params = self.build_generic_data(sender)
@@ -17,7 +19,8 @@ class WETH(Contract):
 
         return txn_params
 
-    def withdraw(self, amount_to_swap, account):
+    @evm_transaction
+    def withdraw(self, account, amount_to_swap):
         sender = account.address
 
         txn_params = self.build_generic_data(sender)
