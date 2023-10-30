@@ -10,6 +10,8 @@ ids_chain = {
     421613: 'ARBITRUM',  # LOCAL
     59144: 'LINEA',
     559144: 'LINEA',  # LOCAL
+    534352: 'SCROLL',
+    5534352: 'SCROLL',  # LOCAL
     8453: 'BASE',
     18453: 'BASE',
     56: 'BSC',
