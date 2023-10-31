@@ -31,10 +31,8 @@ class TestApp(unittest.TestCase):
         try:
             self.assertFalse(
                 process_accounts([zksync_test_account],
-                                 None,
                                  min_native_interval,
                                  [(MockModule, {})],
-                                 okx_config,
                                  sleep_interval)
             )
         except Exception as e:
@@ -46,7 +44,7 @@ class TestApp(unittest.TestCase):
         modules, encryption, min_native_interval, proxy_config, okx_config, sleep_interval, swap_retry_sleep_interval, gas_prices_gwei = create_config()
 
         try:
-            process_accounts([zksync_test_account], None, min_native_interval, [(MockFailModule, {})], okx_config,
+            process_accounts([zksync_test_account], min_native_interval, [(MockFailModule, {})],
                              sleep_interval)
 
             self.assertEqual(

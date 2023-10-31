@@ -3,7 +3,7 @@ import random
 
 from loguru import logger
 
-from sybil_engine.config.app_config import get_okx_config
+from sybil_engine.config.app_config import get_okx
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance
 from sybil_engine.module.module import Order
 from sybil_engine.utils.okx import withdrawal
@@ -33,15 +33,15 @@ def randomize_modules(modules):
     return list(itertools.chain(*arrays))
 
 
-def execute_modules(okx_secret, sleep_interval, module_classes, account, min_native_balance):
+def execute_modules(sleep_interval, module_classes, account, min_native_balance):
     modules = [(module_class(min_native_balance, account), module_args) for module_class, module_args in module_classes]
     randomized_modules = randomize_modules(modules)
 
     for module, module_args in randomized_modules:
-        execute_module(okx_secret, sleep_interval, module_args, account, module)
+        execute_module(sleep_interval, module_args, account, module)
 
 
-def execute_module(okx_secret, sleep_interval, module_args, account, module):
+def execute_module(sleep_interval, module_args, account, module):
     try:
         logger.info(f"Start {module.log()} Module {account.address}")
         module.set_auto_withdrawal(module_args)
@@ -52,11 +52,11 @@ def execute_module(okx_secret, sleep_interval, module_args, account, module):
     except ModuleException as e:
         logger.info(e.message)
     except NotEnoughNativeBalance as e:
-        cex_data, auto_withdrawal, withdraw_interval = get_okx_config()
+        okx_secret, (cex_data, auto_withdrawal, withdraw_interval) = get_okx()
 
         if auto_withdrawal and e.chain in ['ZKSYNC', 'LINEA'] and module.auto_withdrawal:
             withdrawal(account.address, okx_secret, e.chain, cex_data, withdraw_interval)
             randomized_sleeping({'from': 60 * 5, 'to': 60 * 10})
-            execute_module(okx_secret, sleep_interval, module_args, account, module)
+            execute_module(sleep_interval, module_args, account, module)
         else:
             raise AccountException(e)
