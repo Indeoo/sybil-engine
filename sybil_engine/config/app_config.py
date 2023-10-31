@@ -2,6 +2,7 @@ network = None
 dex_retry_interval = None
 gas_prices_gwei = None
 module_data = None
+okx_config = None
 
 
 def set_network(value):
@@ -38,3 +39,12 @@ def set_module_data(value):
 
 def get_module_data():
     return module_data
+
+
+def set_okx_config(value):
+    global okx_config
+    okx_config = value
+
+
+def get_okx_config():
+    return okx_config
