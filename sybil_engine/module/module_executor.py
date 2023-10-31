@@ -15,7 +15,12 @@ def split_list(items):
     sublist = []
     for module, config in items:
         item_tuple = (module, config)
-        if module.order() == Order.STRICT:
+        if 'order' in config:
+            order = Order.__members__[config['order']]
+        else:
+            order = module.order()
+
+        if order == Order.STRICT:
             if sublist:
                 result.append(sublist)
                 sublist = []
