@@ -1,7 +1,8 @@
 import random
 
 from loguru import logger
-from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data
+from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data, \
+    set_okx_config
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
 from sybil_engine.module.module_executor import execute_modules
 from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str
@@ -57,6 +58,7 @@ def launch_app(args, module_config, config):
     set_dex_retry_interval(swap_retry_sleep_interval)
     set_gas_prices(gas_price)
     set_module_data(modules_data)
+    set_okx_config(okx)
 
     okx_secret = args.password.encode('utf-8')
 
@@ -80,13 +82,13 @@ def launch_app(args, module_config, config):
     if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
         raise ConfigurationException("Non-existing module is used")
 
-    process_accounts(accounts, okx_secret, min_native_interval, modules, okx, sleep_interval)
+    process_accounts(accounts, okx_secret, min_native_interval, modules, sleep_interval)
 
     print_fee()
     print_accumulated()
 
 
-def process_accounts(app_accounts, okx_secret, min_native_interval, modules, okx_config, sleep_interval):
+def process_accounts(app_accounts, okx_secret, min_native_interval, modules, sleep_interval):
     logger.info(f"Loaded {len(app_accounts)} accounts")
 
     for index, account in enumerate(app_accounts, 1):
@@ -95,7 +97,7 @@ def process_accounts(app_accounts, okx_secret, min_native_interval, modules, okx
         min_native_balance = interval_to_eth_balance(min_native_interval, account, None, None)
 
         try:
-            execute_modules(okx_secret, sleep_interval, modules, account, okx_config, min_native_balance)
+            execute_modules(okx_secret, sleep_interval, modules, account, min_native_balance)
         except AccountException as e:
             logger.error(f'Error, skip account {account}: {e}')
             add_accumulator_str("Failed accounts: ", account)
