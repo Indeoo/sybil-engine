@@ -11,6 +11,7 @@ class Module:
     module_name = 'None'
     allowed_chains = 'None'
     random_order = Order.STRICT
+    repeat_conf = 'repeats'
 
     def __init__(self, min_native_balance, account):
         self.min_native_balance = min_native_balance
@@ -40,3 +41,10 @@ class Module:
 
     def order(self):
         return self.random_order
+
+
+class RepeatableModule(Module):
+
+    def __init__(self, min_native_balance, account, repeats):
+        super().__init__(min_native_balance, account)
+        self.repeats = repeats
