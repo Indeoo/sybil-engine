@@ -1,18 +1,16 @@
-import random
-
 from loguru import logger
 from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data, \
     set_okx_config
-from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
-from sybil_engine.module.module_executor import execute_modules
-from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str
+from sybil_engine.module.execution_planner import create_execution_plans
+from sybil_engine.module.module_executor import ModuleExecutor
+from sybil_engine.utils.accumulator import print_accumulated
 from sybil_engine.utils.app_account_utils import create_app_accounts
 from sybil_engine.utils.arguments_parser import parse_arguments
 from sybil_engine.utils.configuration_loader import load_config_maps, load_module_vars
 from sybil_engine.utils.fee_storage import print_fee
 from sybil_engine.utils.logs import load_logger
 from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot
-from sybil_engine.utils.utils import ConfigurationException, AccountException
+from sybil_engine.utils.utils import ConfigurationException
 from sybil_engine.utils.wallet_loader import load_addresses
 
 
@@ -20,10 +18,6 @@ def prepare_launch_without_data(modules_data_file):
     config_map, module_map = load_config_maps()
     modules_data = load_module_vars(modules_data_file)['modules_data']
 
-    prepare_launch(config_map, module_map, modules_data)
-
-
-def prepare_launch(config_map, module_map, modules_data):
     load_logger(send_to_bot, config_map['telegram_enabled'], config_map['telegram_log_level'])
 
     args = parse_arguments(config_map['password'], module_map['module'])
@@ -60,6 +54,11 @@ def launch_app(args, module_config, config):
     set_module_data(modules_data)
     set_okx_config((args.password.encode('utf-8'), okx))
 
+    logger.info(f"START {module_config['scenario_name']} application in {args.network}")
+
+    if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
+        raise ConfigurationException("Non-existing module is used")
+
     accounts = create_app_accounts(
         load_addresses(args.private_keys),
         (proxy_mode, args.proxy_file),
@@ -68,37 +67,12 @@ def launch_app(args, module_config, config):
         args.password.encode('utf-8'),
         encryption
     )
-    random.shuffle(accounts)
 
-    modules = [
-        (modules_data.get_module_class_by_name(module['module']), module['params']) for module in
-        module_config['scenario']
-    ]
+    execution_plans = create_execution_plans(accounts, min_native_interval, module_config, modules_data)
 
-    logger.info(f"START {module_config['scenario_name']} application in {args.network}")
-
-    if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
-        raise ConfigurationException("Non-existing module is used")
-
-    process_accounts(accounts, min_native_interval, modules, sleep_interval)
+    for index, (account, min_native_balance, modules) in execution_plans:
+        logger.info(f"[{index}/{len(accounts)}][{account.app_id}] {account.address}")
+        ModuleExecutor(sleep_interval).execute_modules(modules, account)
 
     print_fee()
     print_accumulated()
-
-
-def process_accounts(app_accounts, min_native_interval, modules, sleep_interval):
-    logger.info(f"Loaded {len(app_accounts)} accounts")
-
-    for index, account in enumerate(app_accounts, 1):
-        logger.info(f"[{index}/{len(app_accounts)}][{account.app_id}] {account.address}")
-
-        min_native_balance = interval_to_eth_balance(min_native_interval, account, None, None)
-
-        try:
-            execute_modules(sleep_interval, modules, account, min_native_balance)
-        except AccountException as e:
-            logger.error(f'Error, skip account {account}: {e}')
-            add_accumulator_str("Failed accounts: ", account)
-        except Exception as e:
-            logger.error(f'Error, skip account {account}: {e}')
-            add_accumulator_str("Failed accounts: ", account)
