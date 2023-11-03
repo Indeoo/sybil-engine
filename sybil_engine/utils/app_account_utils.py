@@ -2,6 +2,7 @@ import random
 from itertools import zip_longest
 
 from eth_account import Account
+from loguru import logger
 from web3 import Web3
 
 from sybil_engine.utils.decryptor import decrypt_private_key
@@ -61,6 +62,9 @@ def create_app_account_with_proxies(cex_addresses, encryption, password, private
                 proxy = None
 
         app_accounts = app_accounts + [AppAccount(index, proxy, account, cex_address, starknet_address)]
+
+    logger.info(f"Loaded {len(app_accounts)} accounts")
+    random.shuffle(app_accounts)
 
     return app_accounts
 

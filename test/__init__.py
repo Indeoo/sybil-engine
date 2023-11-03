@@ -37,7 +37,7 @@ for loader, module_name, is_pkg in pkgutil.iter_modules(['core/contract']):
 
 
 gas_prices_gwei_test = {
-    'ETH_MAINNET': 30,
+    'ETH_MAINNET': 100,
     'ZKSYNC': 0.26,
     'BASE': 0.5,
     'LINEA': 2,

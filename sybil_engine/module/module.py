@@ -13,10 +13,10 @@ class Module:
     random_order = Order.STRICT
     repeat_conf = 'repeats'
 
-    def __init__(self, min_native_balance, account):
+    def __init__(self, min_native_balance, accumulator, auto_withdrawal=False):
         self.min_native_balance = min_native_balance
-        self.account = account
-        self.auto_withdrawal = False
+        self.accumulator = accumulator
+        self.auto_withdrawal = auto_withdrawal
 
     def execute(self, *args):
         pass
@@ -35,16 +35,12 @@ class Module:
         if chain not in self.allowed_chains:
             raise ConfigurationException(f"{self.module_name} does not support {chain}, skip")
 
-    def set_auto_withdrawal(self, module_params):
-        if module_params.get('auto_withdrawal', False):
-            self.auto_withdrawal = True
-
     def order(self):
         return self.random_order
 
 
 class RepeatableModule(Module):
 
-    def __init__(self, min_native_balance, account, repeats):
-        super().__init__(min_native_balance, account)
+    def __init__(self, min_native_balance, accumulator, auto_withdrawal, repeats):
+        super().__init__(min_native_balance, accumulator, auto_withdrawal)
         self.repeats = repeats
