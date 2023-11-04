@@ -1,3 +1,7 @@
+from functools import wraps
+
+from loguru import logger
+
 from sybil_engine.utils.utils import ConfigurationException
 from enum import Enum
 
@@ -15,7 +19,6 @@ class Module:
 
     def __init__(self, min_native_balance, storage, auto_withdrawal=False):
         self.min_native_balance = min_native_balance
-        self.accumulator = storage
         self.storage = storage
         self.auto_withdrawal = auto_withdrawal
 
@@ -44,3 +47,34 @@ class RepeatableModule(Module):
     def __init__(self, min_native_balance, storage, auto_withdrawal, repeats):
         super().__init__(min_native_balance, storage, auto_withdrawal)
         self.repeats = repeats
+
+    def print_repeat(self, account):
+        if issubclass(type(self), RepeatableModule):
+            if self.storage.get(self.module_name) is None:
+                self.storage.put(self.module_name, 1)
+            else:
+                self.storage.put(self.module_name, self.storage.get(self.module_name) + 1)
+
+            logger.info(
+                f"({self.storage.get(self.module_name)}/{self.repeats}) {self.module_name} {account.address}")
+
+            if self.storage.get(self.module_name) == self.repeats:
+                self.storage.put(self.module_name, None)
+
+    @staticmethod
+    def repeatable_log(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            module_name = self.module_name
+            self.storage.setdefault(module_name, 1)
+
+            logger.info(f"({self.storage.get(module_name)}/{self.repeats}) {module_name} {args[-1].address}")
+
+            if self.storage.get(module_name) == self.repeats:
+                self.storage.put(module_name, 1)
+            else:
+                self.storage.put(module_name, self.storage.get(module_name) + 1)
+
+            return func(self, *args, **kwargs)
+
+        return wrapper
