@@ -1,9 +1,9 @@
 import itertools
 import random
 
+from sybil_engine.domain.account_storage import AccountStorage
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
 from sybil_engine.module.module import RepeatableModule, Order
-from sybil_engine.module.module_executor import AccountStorage
 from sybil_engine.utils.utils import interval_to_int
 
 
