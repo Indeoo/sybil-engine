@@ -9,16 +9,16 @@ from sybil_engine.utils.okx import withdrawal
 from sybil_engine.utils.utils import randomized_sleeping, ModuleException, AccountException
 
 
-class AccountAccumulator:
+class AccountStorage:
 
     def __init__(self):
-        self.accumulator = {}
+        self.storage = {}
 
     def put(self, key, value):
-        self.accumulator[key] = value
+        self.storage[key] = value
 
     def get(self, key):
-        return self.accumulator.get(key)
+        return self.storage.get(key)
 
 
 class ModuleExecutor:

@@ -5,8 +5,8 @@ from sybil_engine.module.module import RepeatableModule
 class RepeatableMockModule(RepeatableModule):
     module_name = 'RepeatableMockModule'
 
-    def __init__(self, min_native_balance, accumulator, auto_withdrawal, repeats):
-        super().__init__(min_native_balance, accumulator, auto_withdrawal, repeats)
+    def __init__(self, min_native_balance, storage, auto_withdrawal, repeats):
+        super().__init__(min_native_balance, storage, auto_withdrawal, repeats)
 
     def execute(self, account):
         logger.info("SuccessModule")

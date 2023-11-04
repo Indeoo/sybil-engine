@@ -3,7 +3,7 @@ import random
 
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
 from sybil_engine.module.module import RepeatableModule, Order
-from sybil_engine.module.module_executor import AccountAccumulator
+from sybil_engine.module.module_executor import AccountStorage
 from sybil_engine.utils.utils import interval_to_int
 
 
@@ -20,7 +20,7 @@ def create_execution_plans(accounts, min_native_interval, module_config, modules
 
 
 def get_account_modules(min_native_balance, module_config, modules_data):
-    accumulator = AccountAccumulator()
+    storage = AccountStorage()
 
     module_classes = [
         (modules_data.get_module_class_by_name(module['module']), module['params']) for module in
@@ -36,10 +36,10 @@ def get_account_modules(min_native_balance, module_config, modules_data):
             counted_repeats = repeats(module_args, module_class.repeat_conf)
             for i in counted_repeats:
                 module_with_args = (
-                    module_class(min_native_balance, accumulator, auto_withdrawal, len(counted_repeats)), module_args)
+                    module_class(min_native_balance, storage, auto_withdrawal, len(counted_repeats)), module_args)
                 modules.append(module_with_args)
         else:
-            module_with_args = (module_class(min_native_balance, accumulator, auto_withdrawal), module_args)
+            module_with_args = (module_class(min_native_balance, storage, auto_withdrawal), module_args)
             modules.append(module_with_args)
 
     return modules
