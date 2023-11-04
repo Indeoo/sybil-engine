@@ -35,11 +35,12 @@ def get_account_modules(min_native_balance, module_config, modules_data):
         if issubclass(module_class, RepeatableModule):
             counted_repeats = repeats(module_args, module_class.repeat_conf)
             for i in counted_repeats:
-                tulpe = (module_class(min_native_balance, accumulator, auto_withdrawal, len(counted_repeats)),module_args)
-                modules.append(tulpe)
+                module_with_args = (
+                    module_class(min_native_balance, accumulator, auto_withdrawal, len(counted_repeats)), module_args)
+                modules.append(module_with_args)
         else:
-            tulpe = (module_class(min_native_balance, accumulator, auto_withdrawal), module_args)
-            modules.append(tulpe)
+            module_with_args = (module_class(min_native_balance, accumulator, auto_withdrawal), module_args)
+            modules.append(module_with_args)
 
     return modules
 

@@ -13,6 +13,12 @@ mock = {
             }
         },
         {
+            'module': 'RepeatableMockModule',
+            'params': {
+                'repeats': {'from': 3, 'to': 3}
+            }
+        },
+        {
             'module': 'MockModule',
             'params': {
             }
@@ -23,12 +29,13 @@ mock = {
 
 class TestExecutionPlanner(unittest.TestCase):
 
-    def test_should_form_execution_planner(self):
+    def test_should_form_execution_planner(self, account=zksync_test_account):
         modules, encryption, min_native_interval, proxy_config, okx_config, sleep_interval, swap_retry_sleep_interval, gas_prices_gwei = create_config()
 
-        create_execution_plans(
-            [zksync_test_account],
-            min_native_interval,
-            mock,
-            modules
-        )
+        execution_plans = create_execution_plans([account], min_native_interval, mock, modules)
+
+        index, (plan_account, min_native_balance, modules) = execution_plans[0]
+
+        self.assertEqual(1, index)
+        self.assertEqual(plan_account, account)
+        self.assertEqual(5, len(modules))
