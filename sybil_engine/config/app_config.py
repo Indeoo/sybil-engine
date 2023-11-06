@@ -2,7 +2,7 @@ network = None
 dex_retry_interval = None
 gas_prices_gwei = None
 module_data = None
-okx = None, (None, None, None)
+okx = None, (None, None, None, None)
 
 
 def set_network(value):

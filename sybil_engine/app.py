@@ -36,11 +36,17 @@ def prepare_launch_without_data(modules_data_file):
         config_map['encryption'],
         module_map['min_native_interval'],
         config_map['proxy_mode'],
-        (config_map['cex_data'], config_map['auto_withdrawal'], config_map['withdraw_interval']),
+        (
+            config_map['cex_data'],
+            config_map.get('auto_withdrawal', False),
+            config_map.get('min_auto_withdraw_interval', {'from': 0.1, 'to': 0.2}),
+            config_map['withdraw_interval']
+        ),
         module_map['sleep_interval'],
         module_map['swap_retry_sleep_interval'],
         config_map['gas_prices']
     )
+
     launch_app(args, module_config, config)
 
 

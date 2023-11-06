@@ -1,8 +1,9 @@
 from loguru import logger
 from web3 import Web3
 
+from sybil_engine.config.app_config import get_okx
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance, Erc20Balance, WETHBalance, NativeBalance
-from sybil_engine.utils.utils import interval_to_round
+from sybil_engine.utils.utils import interval_to_round, deprecated
 
 
 def from_wei_to_eth(wei):
@@ -22,11 +23,18 @@ def verify_balance(min_native_balance, chain_instance, account, web3):
 
     logger.info(f"Native balance: {native_balance.log_line()}")
 
+    _, (_, auto_withdrawal, min_auto_withdraw_interval, _) = get_okx()
+
     if min_native_balance.wei >= native_balance.wei:
         raise NotEnoughNativeBalance(f"Min native balance {min_native_balance.log_line()} > native balance",
                                      chain_instance['chain'])
 
-    return native_balance
+    if auto_withdrawal:
+        if min_auto_withdraw_interval.wei >= native_balance.wei:
+            raise NotEnoughNativeBalance(f"Min native balance {min_auto_withdraw_interval.log_line()} > native balance",
+                                         chain_instance['chain'])
+
+    return native_balance.minus(min_native_balance)
 
 
 def amount_to_swap_for_pair(account, chain, min_native_balance, native_balance, pair, swap_amount_interval, swap_token,

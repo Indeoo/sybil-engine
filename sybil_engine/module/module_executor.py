@@ -33,7 +33,7 @@ class ModuleExecutor:
         except ModuleException as e:
             logger.info(e.message)
         except NotEnoughNativeBalance as e:
-            okx_secret, (cex_data, auto_withdrawal, withdraw_interval) = get_okx()
+            okx_secret, (cex_data, auto_withdrawal, min_auto_withdraw_interval, withdraw_interval) = get_okx()
 
             if auto_withdrawal and e.chain in ['ZKSYNC', 'LINEA'] and module.auto_withdrawal:
                 withdrawal(account.address, okx_secret, e.chain, cex_data, withdraw_interval)
