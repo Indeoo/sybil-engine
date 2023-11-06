@@ -30,8 +30,9 @@ def verify_balance(min_native_balance, chain_instance, account, web3):
                                      chain_instance['chain'])
 
     if auto_withdrawal:
-        if min_auto_withdraw_interval.wei >= native_balance.wei:
-            raise NotEnoughNativeBalance(f"Min native balance {min_auto_withdraw_interval.log_line()} > native balance",
+        min_auto_withdrawal_balance = interval_to_eth_balance(min_auto_withdraw_interval, account, chain_instance['chain'], web3)
+        if min_auto_withdrawal_balance.wei >= native_balance.wei:
+            raise NotEnoughNativeBalance(f"Min balance for OKX {min_auto_withdrawal_balance.log_line()} > native balance",
                                          chain_instance['chain'])
 
     return native_balance.minus(min_native_balance)
