@@ -21,7 +21,7 @@ def retry_swap(max_retries=3, exception_type=TransactionExecutionException):
                     return func(self, *args, **kwargs)
                 except exception_type as e:
                     if retry == max_retries - 1:  # if it's the last retry
-                        raise SwapException(str(e))
+                        raise SwapException("Exception while trying to swap") from e
                     else:
                         logger.error(str(e))
                         logger.error(f"Error during attempt {retry + 1}/{max_retries}: {e}. Retrying...")

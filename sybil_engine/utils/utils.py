@@ -40,12 +40,6 @@ class AccountException(Exception):
         super().__init__(self.message)
 
 
-# class TransactionExecutionException(AccountException):
-#     def __init__(self, message):
-#         self.message = message
-#         super().__init__(self.message)
-
-
 class ConfigurationException(Exception):
     def __init__(self, message):
         self.message = message
@@ -58,7 +52,7 @@ class ModuleException(Exception):
         super().__init__(self.message)
 
 
-class SwapException(AccountException):
+class SwapException(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
