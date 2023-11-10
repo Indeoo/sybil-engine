@@ -2,7 +2,8 @@ from functools import wraps
 
 from loguru import logger
 
-from sybil_engine.utils.utils import ConfigurationException
+from sybil_engine.domain.balance.balance import NotEnoughNativeBalance
+from sybil_engine.utils.utils import ConfigurationException, ModuleException
 from enum import Enum
 
 
@@ -27,6 +28,9 @@ class Module:
 
     def log(self):
         pass
+
+    def handle(self, e):
+        raise e
 
     def parse_params(self, module_params):
         return []
@@ -65,3 +69,9 @@ class RepeatableModule(Module):
             return func(self, *args, **kwargs)
 
         return wrapper
+
+    def handle(self, e):
+        if isinstance(e, NotEnoughNativeBalance):
+            raise e
+
+        raise ModuleException("Fail to complete step of the repeatable module") from e

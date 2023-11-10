@@ -1,5 +1,4 @@
 from loguru import logger
-from collections import defaultdict
 
 from sybil_engine.config.app_config import get_okx
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance
@@ -27,9 +26,12 @@ class ModuleExecutor:
     def execute_module(self, module_args, account, module):
         try:
             parsed_module_args = module.parse_params(module_args)
-            module.execute(*parsed_module_args, account)
-            if module.sleep_after():
-                randomized_sleeping(self.sleep_interval)
+            try:
+                module.execute(*parsed_module_args, account)
+                if module.sleep_after():
+                    randomized_sleeping(self.sleep_interval)
+            except Exception as e:
+                module.handle(e)
         except ModuleException as e:
             logger.info(e.message)
         except NotEnoughNativeBalance as e:
@@ -40,4 +42,4 @@ class ModuleExecutor:
                 randomized_sleeping({'from': 60 * 5, 'to': 60 * 10})
                 self.execute_module(module_args, account, module)
             else:
-                raise AccountException(e)
+                raise AccountException(e) from e
