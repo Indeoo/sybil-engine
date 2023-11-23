@@ -14,7 +14,12 @@ class Erc20Token:
         self.erc20_contract = Erc20Contract(get_tokens_for_chain(self.chain)[self.token], self.web3)
 
     def balance(self, account):
-        return Erc20Balance(self.erc20_contract.balance_of(account), self.chain, self.token)
+        return Erc20Balance(
+            self.erc20_contract.balance_of(account),
+            self.chain,
+            self.token,
+            decimal=self.erc20_contract.decimals()
+        )
 
     def approve(self, account, contract_on_approve):
         caller_frame = inspect.currentframe().f_back

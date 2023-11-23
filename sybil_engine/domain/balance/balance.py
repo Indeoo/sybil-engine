@@ -31,7 +31,7 @@ class Balance:
             raise BalanceException(f'Trying to minus wrong token {self.token} - {balance.token}')
 
         if self.wei <= balance.wei:
-            raise BalanceException(f'Result of minus cant be less than 0 {self.wei} - {balance.wei}')
+            raise NotEnoughNativeBalance(f'Result of minus cant be less than 0 {self.wei} - {balance.wei}')
 
         return self.__class__(
             self.wei - balance.wei,
@@ -57,20 +57,20 @@ class NativeBalance(Balance):
 
 
 class Erc20Balance(Balance):
-    def __init__(self, wei_balance, chain, token):
+    DEFAULT_DECIMAL = 6
+
+    def __init__(self, wei_balance, chain, token, decimal=DEFAULT_DECIMAL):
         super().__init__(wei_balance, chain, token)
+        if self.chain == 'BSC':
+            self.decimal = 18
+        else:
+            self.decimal = decimal
 
     def wei_compare(self):
-        if self.chain == 'BSC':
-            return self.wei / 10 ** 12
-        else:
-            return self.wei
+        return self.wei / 10 ** (self.decimal - Erc20Balance.DEFAULT_DECIMAL)
 
     def readable(self):
-        if self.chain == 'BSC':
-            return Decimal(self.wei / 10 ** 18)
-        else:
-            return Decimal(self.wei / 10 ** 6)
+        return Decimal(self.wei / 10 ** self.decimal)
 
 
 class WETHBalance(Balance):
