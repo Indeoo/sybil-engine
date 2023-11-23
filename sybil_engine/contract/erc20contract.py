@@ -31,3 +31,6 @@ class Erc20Contract(Contract):
 
     def allowance(self, account, allowance_contract):
         return self.contract.functions.allowance(account.address, Web3.to_checksum_address(allowance_contract)).call()
+
+    def decimals(self):
+        return self.contract.functions.decimals().call()
