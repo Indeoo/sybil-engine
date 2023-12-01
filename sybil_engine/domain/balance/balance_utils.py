@@ -30,10 +30,12 @@ def verify_balance(min_native_balance, chain_instance, account, web3):
                                      chain_instance['chain'])
 
     if auto_withdrawal:
-        min_auto_withdrawal_balance = interval_to_eth_balance(min_auto_withdraw_interval, account, chain_instance['chain'], web3)
+        min_auto_withdrawal_balance = interval_to_eth_balance(min_auto_withdraw_interval, account,
+                                                              chain_instance['chain'], web3)
         if min_auto_withdrawal_balance.wei >= native_balance.wei:
-            raise NotEnoughNativeBalance(f"Min balance for OKX {min_auto_withdrawal_balance.log_line()} > native balance",
-                                         chain_instance['chain'])
+            raise NotEnoughNativeBalance(
+                f"Min balance for OKX {min_auto_withdrawal_balance.log_line()} > native balance",
+                chain_instance['chain'])
 
     return native_balance.minus(min_native_balance)
 
@@ -66,7 +68,12 @@ def interval_to_erc20_balance(erc20_interval, account, token, chain, web3):
     if erc20_interval == 'all_balance':
         return erc20_balance
     else:
-        return Erc20Balance(int(interval_to_round(erc20_interval) * 10 ** erc20_balance.decimal), chain, token)
+        return Erc20Balance(
+            int(interval_to_round(erc20_interval) * 10 ** erc20_balance.decimal),
+            chain,
+            token,
+            decimal=erc20_balance.decimal
+        )
 
 
 def interval_to_weth_balance(erc20_interval, account, chain, web3):
