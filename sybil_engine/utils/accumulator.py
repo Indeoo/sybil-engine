@@ -1,6 +1,6 @@
 from loguru import logger
 
-from sybil_engine.domain.balance.balance import Erc20Balance
+from sybil_engine.domain.balance.balance import Erc20Balance, NativeBalance
 
 accumulator = {
 }
@@ -8,7 +8,7 @@ accumulator = {
 
 def add_accumulator(key: str, value: int):
     if key not in accumulator:
-        accumulator[key] = value
+        accumulator[key] = 0
 
     accumulator[key] += value
 
@@ -18,6 +18,13 @@ def add_accumulator_balance(key: str, value: int):
         accumulator[key] = Erc20Balance(0, None, 'USDC')
 
     accumulator[key] = Erc20Balance(accumulator[key].wei + value, None, 'USDC')
+
+
+def add_accumulator_native_balance(key: str, value: int):
+    if key not in accumulator:
+        accumulator[key] = NativeBalance(0, None, 'ETH')
+
+    accumulator[key] = NativeBalance(accumulator[key].wei + value, None, 'ETH')
 
 
 def add_accumulator_str(key: str, value: str):
