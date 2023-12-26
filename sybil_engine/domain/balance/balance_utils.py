@@ -2,6 +2,7 @@ from loguru import logger
 from web3 import Web3
 
 from sybil_engine.config.app_config import get_okx
+from sybil_engine.data.networks import get_chain_instance
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance, Erc20Balance, WETHBalance, NativeBalance
 from sybil_engine.utils.utils import interval_to_round, deprecated
 
@@ -90,6 +91,21 @@ def interval_to_eth_balance(eth_interval, account, chain, web3):
         balance = get_native_balance_for_params(account, web3, chain, 'ETH')
     else:
         balance = NativeBalance(from_eth_to_wei(interval_to_round(eth_interval)), chain, 'ETH')
+
+    return NativeBalance(int(balance.wei // 10000) * 10000, chain, balance.token)
+
+
+def interval_to_native_balance(eth_interval, account, chain, web3):
+    if chain is None:
+        gas_token = None
+    else:
+        chain_instance = get_chain_instance(chain)
+        gas_token = chain_instance['gas_token']
+
+    if eth_interval == 'all_balance':
+        balance = get_native_balance_for_params(account, web3, chain, gas_token)
+    else:
+        balance = NativeBalance(from_eth_to_wei(interval_to_round(eth_interval)), chain, gas_token)
 
     return NativeBalance(int(balance.wei // 10000) * 10000, chain, balance.token)
 

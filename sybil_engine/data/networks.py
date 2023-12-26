@@ -18,7 +18,8 @@ ids_chain = {
     250: 'FANTOM',
     10: 'OPTIMISM',
     137: 'POLYGON',
-    43114: 'AVALANCHE'
+    43114: 'AVALANCHE',
+    42766: 'ZKFAIR'
 }
 
 
