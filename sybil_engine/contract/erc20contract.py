@@ -18,12 +18,20 @@ class Erc20Contract(Contract):
     def approve(self, account, contract_on_approve):
         logger.info(f"Approving token")
 
-        txn_params = self.build_generic_data(account.address)
+        txn_params = self.build_generic_data(account.address, set_contract_address=False)
 
-        del txn_params['to']
         return self.contract.functions.approve(
             Web3.to_checksum_address(contract_on_approve),
             MAX_ALLOWANCE
+        ).build_transaction(txn_params)
+
+    @evm_transaction
+    def transfer(self, account, amount, receive_address):
+        txn_params = self.build_generic_data(account.address, set_contract_address=False)
+
+        return self.contract.functions.transfer(
+            receive_address,
+            amount.wei
         ).build_transaction(txn_params)
 
     def balance_of(self, account):
