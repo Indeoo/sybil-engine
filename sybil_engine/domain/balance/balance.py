@@ -24,10 +24,10 @@ class Balance:
         pass
 
     def minus(self, balance):
-        if self.chain != balance.chain and balance.chain is not None:
+        if self.chain != balance.chain and (self.chain is not None and balance.chain is not None):
             raise BalanceException(f'Trying to minus wrong chain {self.chain} - {balance.chain}')
 
-        if self.token != balance.token and self.token is not None:
+        if self.token != balance.token and (self.chain is not None and balance.chain is not None):
             raise BalanceException(f'Trying to minus wrong token {self.token} - {balance.token}')
 
         if self.wei <= balance.wei:
