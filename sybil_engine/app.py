@@ -76,7 +76,7 @@ def launch_app(args, module_config, config):
 
     execution_plans = create_execution_plans(accounts, min_native_interval, module_config, modules_data)
 
-    for index, (account, min_native_balance, modules) in execution_plans:
+    for index, (account, modules) in execution_plans:
         logger.info(f"[{index}/{len(accounts)}][{account.app_id}] {account.address}")
         ModuleExecutor(sleep_interval).execute_modules(modules, account)
 

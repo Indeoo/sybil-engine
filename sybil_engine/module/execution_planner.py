@@ -2,7 +2,7 @@ import itertools
 import random
 
 from sybil_engine.domain.account_storage import AccountStorage
-from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance, interval_to_native_balance
+from sybil_engine.domain.balance.balance_utils import interval_to_native_balance
 from sybil_engine.module.module import RepeatableModule, Order
 from sybil_engine.utils.utils import interval_to_int
 
@@ -11,15 +11,14 @@ def create_execution_plans(accounts, min_native_interval, module_config, modules
     execution_plan = []
 
     for index, account in enumerate(accounts, 1):
-        min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
-        modules = randomize_modules(get_account_modules(min_native_balance, module_config, modules_data))
+        modules = randomize_modules(get_account_modules(min_native_interval, account, module_config, modules_data))
 
-        execution_plan.append((index, (account, min_native_balance, modules)))
+        execution_plan.append((index, (account, modules)))
 
     return execution_plan
 
 
-def get_account_modules(min_native_balance, module_config, modules_data):
+def get_account_modules(default_min_native_interval, account, module_config, modules_data):
     storage = AccountStorage()
 
     module_classes = [
@@ -31,6 +30,9 @@ def get_account_modules(min_native_balance, module_config, modules_data):
 
     for module_class, module_args in module_classes:
         auto_withdrawal = get_auto_withdrawal(module_args)
+        min_native_interval = get_min_native_interval(default_min_native_interval, module_args)
+
+        min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
 
         if issubclass(module_class, RepeatableModule):
             counted_repeats = repeats(module_args, module_class.repeat_conf)
@@ -85,3 +87,9 @@ def get_auto_withdrawal(module_params):
         return module_params['auto_withdrawal']
     else:
         return False
+
+def get_min_native_interval(default_min_native_interval, module_params):
+    if 'min_native_interval' in module_params:
+        return module_params['min_native_interval']
+    else:
+        return default_min_native_interval
