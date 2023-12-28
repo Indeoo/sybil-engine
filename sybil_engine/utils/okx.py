@@ -1,7 +1,9 @@
 import random
 
 import ccxt
-from okx import Funding
+from loguru import logger
+from okx import Funding, SubAccount
+
 from sybil_engine.utils.decryptor import decrypt_okx_api
 
 networks = {
@@ -50,3 +52,48 @@ def withdrawal(addr, password, chain, cex_data, withdraw_interval):
     print(f"Withdraw ETH {amount}ETH")
 
     fundingAPI.withdrawal(ccy='ETH', amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
+
+
+def get_sub_accounts(cex_data, password):
+    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+
+    flag = "0"  # Production trading: 0, Demo trading: 1
+
+    subAccountAPI = SubAccount.SubAccountAPI(api_key, secret_key, passphrase, False, flag, debug=False)
+
+    # Get sub-account list
+    return subAccountAPI.get_subaccount_list()
+
+
+def get_sub_account_balance(acc_name, token, cex_data, password):
+    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+
+    flag = "0"
+
+    subAccountAPI = SubAccount.SubAccountAPI(api_key, secret_key, passphrase, False, flag, debug=False)
+
+    return float(subAccountAPI.get_funding_balance(acc_name, token)['data'][0]['bal'])
+
+
+def transfer_from_sub_acc(acc_name, amount, token, cex_data, password):
+    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+
+    flag = "0"
+
+    subAccountAPI = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag, debug=False)
+
+    return subAccountAPI.funds_transfer(token, amount, 6, 6, type='2', subAcct=acc_name)
+
+
+def okx_transfer_from_sub_account(okx_secret, cex_data):
+    for acc in get_sub_accounts(cex_data, okx_secret)['data']:
+        token = 'ETH'
+        acc_name = acc['subAcct']
+
+        amount = get_sub_account_balance(acc_name, token, cex_data, okx_secret)
+
+        if amount > 0:
+            logger.info(f"Transfer {amount} {token} from {acc_name} to Main account")
+            transfer_from_sub_acc(acc_name, 0.001, token, cex_data, okx_secret)
+        else:
+            logger.info(f"{acc_name} is empty, no transfer required")
