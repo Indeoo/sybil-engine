@@ -8,7 +8,7 @@ class Balance:
     def __init__(self, wei_balance, chain, token):
         self.wei = wei_balance
         self.chain = chain
-        if self.token is None:
+        if token is None:
             self.token = ''
         else:
             self.token = token
