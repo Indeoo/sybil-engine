@@ -8,7 +8,10 @@ class Balance:
     def __init__(self, wei_balance, chain, token):
         self.wei = wei_balance
         self.chain = chain
-        self.token = token
+        if self.token is None:
+            self.token = ''
+        else:
+            self.token = token
 
     def readable(self):
         raise Exception("not supported")
