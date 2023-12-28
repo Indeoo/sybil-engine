@@ -94,6 +94,6 @@ def okx_transfer_from_sub_account(okx_secret, cex_data):
 
         if amount > 0:
             logger.info(f"Transfer {amount} {token} from {acc_name} to Main account")
-            transfer_from_sub_acc(acc_name, 0.001, token, cex_data, okx_secret)
+            transfer_from_sub_acc(acc_name, amount, token, cex_data, okx_secret)
         else:
             logger.info(f"{acc_name} is empty, no transfer required")
