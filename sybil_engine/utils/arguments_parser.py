@@ -24,6 +24,9 @@ def parse_arguments(default_password, default_module):
     parser.add_argument('--starknet_addresses', type=str, required=False,
                         default=os.environ.get('STARKNET_ADDRESSES', f'{wallets_folder}/starknet_addresses.txt'),
                         help='a string to be processed')
+    parser.add_argument('--account_csv', type=str, required=False,
+                        default=os.environ.get('ACCOUNT_CSV', f'{wallets_folder}/accounts.csv'),
+                        help='a string to be processed')
     parser.add_argument('--proxy_file', type=str, required=False,
                         default=os.environ.get('PROXY_FILE', f'{wallets_folder}/proxy.txt'),
                         help='a string to be processed')
@@ -44,6 +47,8 @@ def parse_arguments(default_password, default_module):
         args.starknet_addresses = os.path.join(args.wallets, 'starknet_addresses.txt')
     if '--proxy_file' not in sys.argv:
         args.proxy_file = os.path.join(args.wallets, 'proxy.txt')
+    if '--account_csv' not in sys.argv:
+        args.account_csv = os.path.join(args.wallets, 'accounts.csv')
 
     return args
 
