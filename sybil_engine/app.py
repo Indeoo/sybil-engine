@@ -4,14 +4,13 @@ from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_
 from sybil_engine.module.execution_planner import create_execution_plans
 from sybil_engine.module.module_executor import ModuleExecutor
 from sybil_engine.utils.accumulator import print_accumulated
-from sybil_engine.utils.app_account_utils import create_app_accounts
+from sybil_engine.utils.app_account_utils import create_app_account
 from sybil_engine.utils.arguments_parser import parse_arguments
 from sybil_engine.utils.configuration_loader import load_config_maps, load_module_vars
 from sybil_engine.utils.fee_storage import print_fee
 from sybil_engine.utils.logs import load_logger
 from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot
 from sybil_engine.utils.utils import ConfigurationException
-from sybil_engine.utils.wallet_loader import load_addresses
 
 
 def prepare_launch_without_data(modules_data_file):
@@ -44,7 +43,8 @@ def prepare_launch_without_data(modules_data_file):
         ),
         module_map['sleep_interval'],
         module_map['swap_retry_sleep_interval'],
-        config_map['gas_prices']
+        config_map['gas_prices'],
+        config_map['account_creation_mode']
     )
 
     launch_app(args, module_config, config)
@@ -52,7 +52,7 @@ def prepare_launch_without_data(modules_data_file):
 
 def launch_app(args, module_config, config):
     (modules_data, encryption, min_native_interval, proxy_mode, okx, sleep_interval, swap_retry_sleep_interval,
-     gas_price) = config
+     gas_price, account_creation_mode) = config
 
     set_network(args.network)
     set_dex_retry_interval(swap_retry_sleep_interval)
@@ -65,14 +65,7 @@ def launch_app(args, module_config, config):
     if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
         raise ConfigurationException("Non-existing module is used")
 
-    accounts = create_app_accounts(
-        load_addresses(args.private_keys),
-        (proxy_mode, args.proxy_file),
-        load_addresses(args.cex_addresses),
-        load_addresses(args.starknet_addresses),
-        args.password.encode('utf-8'),
-        encryption
-    )
+    accounts = create_app_account(args, encryption, proxy_mode, account_creation_mode)
 
     execution_plans = create_execution_plans(accounts, min_native_interval, module_config, modules_data)
 

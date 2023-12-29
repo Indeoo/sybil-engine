@@ -5,18 +5,89 @@ from eth_account import Account
 from loguru import logger
 from web3 import Web3
 
+from sybil_engine.utils.csv_reader import read_csv_rows
 from sybil_engine.utils.decryptor import decrypt_private_key
 from sybil_engine.utils.file_loader import load_file_rows
 from sybil_engine.utils.utils import ConfigurationException
+from sybil_engine.utils.wallet_loader import load_addresses
 
 
-def create_app_accounts(private_keys, proxy_config, cex_addresses, starknet_addresses, password, encryption):
+def create_app_account(args, encryption, proxy_mode, account_creation_mode):
+    if account_creation_mode == 'TXT' or account_creation_mode is None:
+        return create_app_accounts_from_txt(
+            args.private_keys,
+            (proxy_mode, args.proxy_file),
+            args.cex_addresses,
+            args.starknet_addresses,
+            args.password.encode('utf-8'),
+            encryption
+        )
+    elif account_creation_mode == 'CSV':
+        return create_app_accounts_from_csv(args.account_csv, args.password.encode('utf-8'), encryption)
+    else:
+        raise ConfigurationException("account_creation_mode should be CSV or TXT")
+
+
+def create_app_accounts_from_txt(private_keys, proxy_config, cex_addresses, starknet_addresses, password, encryption):
     proxy_mode, proxy_file = proxy_config
 
-    proxies = load_file_rows(proxy_file)
+    return create_app_account_with_proxies(
+        load_addresses(cex_addresses),
+        encryption,
+        password,
+        load_addresses(private_keys),
+        load_file_rows(proxy_file),
+        proxy_mode,
+        load_addresses(starknet_addresses)
+    )
 
-    return create_app_account_with_proxies(cex_addresses, encryption, password, private_keys, proxies, proxy_mode,
-                                           starknet_addresses)
+
+def create_app_accounts_from_csv(account_csv, password, encryption):
+    rows = read_csv_rows(account_csv)
+    app_accounts = []
+
+    starknet = False
+    cex = False
+
+    for row in rows:
+        if row[5] == 'FALSE':
+            continue
+
+        if row[2] != '':
+            starknet = True
+        if row[4] != '':
+            cex = True
+
+        if starknet and row[2] == '':
+            raise ConfigurationException("Starknet addresses not should be less than accounts")
+
+        if cex and row[4] == '':
+            raise ConfigurationException("Cex addresses not should be less than accounts")
+
+        if encryption:
+            private_key = decrypt_private_key(row[1], password)
+        else:
+            private_key = row[1]
+
+        if private_key == '' or private_key is None:
+            raise ConfigurationException("All private keys should exist")
+
+        account = Web3().eth.account.from_key(private_key)
+
+        app_accounts.append(
+            AppAccount(
+                row[0],
+                row[2],
+                account,
+                row[3],
+                row[4]
+            )
+        )
+
+    logger.info(f"Loaded {len(app_accounts)} accounts")
+    random.shuffle(app_accounts)
+
+    return app_accounts
 
 
 def create_app_account_with_proxies(cex_addresses, encryption, password, private_keys, proxies, proxy_mode,
