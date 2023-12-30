@@ -50,24 +50,24 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
     cex = False
 
     for row in rows:
-        if row[5] == 'FALSE':
+        if row['ENABLE'] == 'FALSE':
             continue
 
-        if row[2] != '':
+        if row['CEX_ADDRESS'] != '':
             starknet = True
-        if row[4] != '':
+        if row['STARKNET_ADDRESS'] != '':
             cex = True
 
-        if starknet and row[2] == '':
+        if starknet and row['CEX_ADDRESS'] == '':
             raise ConfigurationException("Starknet addresses not should be less than accounts")
 
-        if cex and row[4] == '':
+        if cex and row['STARKNET_ADDRESS'] == '':
             raise ConfigurationException("Cex addresses not should be less than accounts")
 
         if encryption:
-            private_key = decrypt_private_key(row[1], password)
+            private_key = decrypt_private_key(row['PRIVATE_KEY'], password)
         else:
-            private_key = row[1]
+            private_key = row['PRIVATE_KEY']
 
         if private_key == '' or private_key is None:
             raise ConfigurationException("All private keys should exist")
@@ -76,11 +76,11 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
 
         app_accounts.append(
             AppAccount(
-                row[0],
-                row[2],
+                row['ADS_ID'],
+                row['CEX_ADDRESS'],
                 account,
-                row[3],
-                row[4]
+                row['PROXY'],
+                row['STARKNET_ADDRESS']
             )
         )
 

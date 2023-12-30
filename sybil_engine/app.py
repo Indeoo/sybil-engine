@@ -30,6 +30,9 @@ def prepare_launch_without_data(modules_data_file):
             {'module': args.module, 'params': modules_data.get_module_config_by_name(args.module, module_map)}]
     }
 
+    if 'account_creation_mode' not in config_map:
+        config_map['account_creation_mode'] = 'TXT'
+
     config = (
         modules_data,
         config_map['encryption'],
