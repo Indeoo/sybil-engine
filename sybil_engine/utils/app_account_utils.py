@@ -82,9 +82,9 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
         app_accounts.append(
             AppAccount(
                 row['ADS_ID'],
-                row['CEX_ADDRESS'],
-                account,
                 proxy,
+                account,
+                row['CEX_ADDRESS'],
                 row['STARKNET_ADDRESS']
             )
         )
