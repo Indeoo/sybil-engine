@@ -74,12 +74,17 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
 
         account = Web3().eth.account.from_key(private_key)
 
+        if row['PROXY'] == '':
+            proxy = None
+        else:
+            proxy = row['PROXY']
+
         app_accounts.append(
             AppAccount(
                 row['ADS_ID'],
                 row['CEX_ADDRESS'],
                 account,
-                row['PROXY'],
+                proxy,
                 row['STARKNET_ADDRESS']
             )
         )
