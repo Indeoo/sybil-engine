@@ -61,12 +61,14 @@ class RepeatableModule(Module):
 
             logger.info(f"({self.storage.get(module_name)}/{self.repeats}) {module_name} {args[-1].address}")
 
+            result = func(self, *args, **kwargs)
+
             if self.storage.get(module_name) == self.repeats:
                 self.storage.put(module_name, 1)
             else:
                 self.storage.put(module_name, self.storage.get(module_name) + 1)
 
-            return func(self, *args, **kwargs)
+            return result
 
         return wrapper
 
