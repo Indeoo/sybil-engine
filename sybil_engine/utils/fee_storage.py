@@ -8,7 +8,8 @@ FEE = {
     'MATIC': 0,
     'BNB': 0,
     'AVAX': 0,
-    'FTM': 0
+    'FTM': 0,
+    'USDC': 0
 }
 
 
