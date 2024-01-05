@@ -1,5 +1,7 @@
 import importlib.util
 
+from loguru import logger
+
 from sybil_engine.utils.arguments_parser import parse_profile
 
 
