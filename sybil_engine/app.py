@@ -5,7 +5,7 @@ from sybil_engine.module.execution_planner import create_execution_plans
 from sybil_engine.module.module_executor import ModuleExecutor
 from sybil_engine.utils.accumulator import print_accumulated
 from sybil_engine.utils.app_account_utils import create_app_account
-from sybil_engine.utils.arguments_parser import parse_arguments
+from sybil_engine.utils.arguments_parser import parse_arguments, parse_profile
 from sybil_engine.utils.configuration_loader import load_config_maps, load_module_vars
 from sybil_engine.utils.fee_storage import print_fee
 from sybil_engine.utils.logs import load_logger
@@ -33,6 +33,9 @@ def prepare_launch_without_data(modules_data_file):
     if 'account_creation_mode' not in config_map:
         config_map['account_creation_mode'] = 'TXT'
 
+    if 'interactive_confirmation' not in config_map:
+        config_map['interactive_confirmation'] = True
+
     config = (
         modules_data,
         config_map['encryption'],
@@ -47,7 +50,8 @@ def prepare_launch_without_data(modules_data_file):
         module_map['sleep_interval'],
         module_map['swap_retry_sleep_interval'],
         config_map['gas_prices'],
-        config_map['account_creation_mode']
+        config_map['account_creation_mode'],
+        config_map['interactive_confirmation']
     )
 
     launch_app(args, module_config, config)
@@ -55,7 +59,7 @@ def prepare_launch_without_data(modules_data_file):
 
 def launch_app(args, module_config, config):
     (modules_data, encryption, min_native_interval, proxy_mode, okx, sleep_interval, swap_retry_sleep_interval,
-     gas_price, account_creation_mode) = config
+     gas_price, account_creation_mode, interactive_confirmation) = config
 
     set_network(args.network)
     set_dex_retry_interval(swap_retry_sleep_interval)
@@ -65,6 +69,9 @@ def launch_app(args, module_config, config):
 
     logger.info(f"START {module_config['scenario_name']} application in {args.network}")
 
+    profile = parse_profile().profile
+    logger.info(f"Profile {profile} activated")
+
     if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
         raise ConfigurationException("Non-existing module is used")
 
@@ -72,9 +79,20 @@ def launch_app(args, module_config, config):
 
     execution_plans = create_execution_plans(accounts, min_native_interval, module_config, modules_data)
 
+    if interactive_confirmation:
+        logger.info("Are you sure you want to start with this configuration? Y/n")
+        choice = input()
+        if choice == "Y":
+            proceed_accounts(accounts, execution_plans, sleep_interval)
+        else:
+            logger.info("Exiting")
+    else:
+        proceed_accounts(accounts, execution_plans, sleep_interval)
+
+
+def proceed_accounts(accounts, execution_plans, sleep_interval):
     for index, (account, modules) in execution_plans:
         logger.info(f"[{index}/{len(accounts)}][{account.app_id}] {account.address}")
         ModuleExecutor(sleep_interval).execute_modules(modules, account)
-
     print_fee()
     print_accumulated()
