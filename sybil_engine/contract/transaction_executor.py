@@ -52,7 +52,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
 
         transaction_status = tx_receipt['status']
         if transaction_status == 0:
-            raise TransactionExecutionException("Transaction failed.")
+            raise TransactionExecutionException("Transaction status is 0.")
     except Exception as e:
         raise TransactionExecutionException(f"Transaction failed. {e}") from e
 
