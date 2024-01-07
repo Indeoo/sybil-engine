@@ -43,7 +43,7 @@ def withdrawal(addr, password, chain, cex_data, withdraw_interval):
     flag = "0"
     withdraw_network = symbolWithdraw + '-' + networks[chain]
 
-    fundingAPI = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag)
+    fundingAPI = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag, debug=False)
 
     fee = get_withdrawal_fee(api_key, secret_key, passphrase, 'ETH', withdraw_network)
 
