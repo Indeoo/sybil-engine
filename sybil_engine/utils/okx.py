@@ -8,10 +8,14 @@ from sybil_engine.utils.decryptor import decrypt_okx_api
 
 networks = {
     'ZKSYNC': 'zkSync Era',
-    'LINEA': 'Linea'
+    'LINEA': 'Linea',
+    'ARBITRUM': 'Arbitrum One',
+    'BASE': 'Base'
 }
 symbolWithdraw = 'ETH'
 
+
+SUPPORTED_OKX_WITHDRAWAL = ['ZKSYNC', 'LINEA', 'ARBITRUM', 'BASE']
 
 def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_name):
     exchange = ccxt.okx({

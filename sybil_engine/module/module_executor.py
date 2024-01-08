@@ -3,7 +3,7 @@ from loguru import logger
 from sybil_engine.config.app_config import get_okx
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance
 from sybil_engine.utils.accumulator import add_accumulator_str
-from sybil_engine.utils.okx import withdrawal
+from sybil_engine.utils.okx import withdrawal, SUPPORTED_OKX_WITHDRAWAL
 from sybil_engine.utils.utils import randomized_sleeping, ModuleException, AccountException
 
 
@@ -37,7 +37,7 @@ class ModuleExecutor:
         except NotEnoughNativeBalance as e:
             okx_secret, (cex_data, auto_withdrawal, min_auto_withdraw_interval, withdraw_interval) = get_okx()
 
-            if auto_withdrawal and e.chain in ['ZKSYNC', 'LINEA'] and module.auto_withdrawal:
+            if auto_withdrawal and e.chain in SUPPORTED_OKX_WITHDRAWAL and module.auto_withdrawal:
                 withdrawal(account.address, okx_secret, e.chain, cex_data, withdraw_interval)
                 randomized_sleeping({'from': 60 * 5, 'to': 60 * 10})
                 self.execute_module(module_args, account, module)
