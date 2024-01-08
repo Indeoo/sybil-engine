@@ -19,22 +19,38 @@ def prepare_launch_without_data(modules_data_file):
 
     load_logger(send_to_bot, config_map['telegram_enabled'], config_map['telegram_log_level'])
 
-    args = parse_arguments(config_map['password'], module_map['module'])
-
     set_telegram_api_chat_id(config_map['telegram_api_chat_id'])
     set_telegram_api_key(config_map['telegram_api_key'])
 
-    module_config = module_map['scenario_config'] if args.module == 'SCENARIO' else {
-        'scenario_name': args.module,
-        'scenario': [
-            {'module': args.module, 'params': modules_data.get_module_config_by_name(args.module, module_map)}]
-    }
+    args = parse_arguments(config_map['password'], module_map['module'])
+
+    if 'shell_mode' not in config_map:
+        config_map['shell_mode'] = 'classic'
 
     if 'account_creation_mode' not in config_map:
         config_map['account_creation_mode'] = 'TXT'
 
     if 'interactive_confirmation' not in config_map:
         config_map['interactive_confirmation'] = True
+
+    if config_map['shell_mode'] == 'interactive':
+        logger.info("Choose module (by id):")
+
+        for module_id, module in modules_data.get_module_map().items():
+            module_name = get_module_name(module)
+            logger.info(f"  {module_id} {module_name}")
+
+        choice = input()
+        selected_module = modules_data.get_module_map()[int(choice)]
+        module_name = get_module_name(selected_module)
+    else:
+        module_name = args.module
+
+    module_config = module_map['scenario_config'] if module_name == 'SCENARIO' else {
+        'scenario_name': module_name,
+        'scenario': [
+            {'module': module_name, 'params': modules_data.get_module_config_by_name(module_name, module_map)}]
+    }
 
     config = (
         modules_data,
@@ -57,6 +73,13 @@ def prepare_launch_without_data(modules_data_file):
     launch_app(args, module_config, config)
 
 
+def get_module_name(module):
+    if module[0] is not None:
+        return module[0].module_name
+    else:
+        return 'SCENARIO'
+
+
 def launch_app(args, module_config, config):
     (modules_data, encryption, min_native_interval, proxy_mode, okx, sleep_interval, swap_retry_sleep_interval,
      gas_price, account_creation_mode, interactive_confirmation) = config
@@ -67,7 +90,7 @@ def launch_app(args, module_config, config):
     set_module_data(modules_data)
     set_okx_config((args.password.encode('utf-8'), okx))
 
-    logger.info(f"START {module_config['scenario_name']} application in {args.network}")
+    logger.info(f"START {module_config['scenario_name']} module in {args.network}")
 
     profile = parse_profile().profile
     logger.info(f"Profile {profile} activated")
