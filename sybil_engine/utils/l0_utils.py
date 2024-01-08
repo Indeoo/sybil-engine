@@ -9,8 +9,8 @@ def verify_stargate_l0_price(account, chain_instance, to_chain_instance, native_
             to_chain_instance['stargate_chain_id'],
             account.address
         ),
-        native_balance.token,
-        native_balance.chain
+        native_balance.chain,
+        native_balance.token
     )
 
     logger.info(f"Native LayerZero fee: {native_fee_balance.log_line()}")
@@ -28,8 +28,8 @@ def verify_stargate_eth_l0_price(from_chain_instance, to_chain_instance, native_
             stargate_router_eth,
             to_chain_instance
         ),
-        native_balance.token,
-        native_balance.chain
+        native_balance.chain,
+        native_balance.token
     )
 
     logger.info(f"Native LayerZero fee: {native_fee_balance.log_line()}")
