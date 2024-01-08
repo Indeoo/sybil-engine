@@ -9,7 +9,8 @@ from sybil_engine.data.tokens import get_tokens_for_chain
 from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
 from sybil_engine.utils.gas_utils import l1_gas_price
-from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException, deprecated
+from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException, deprecated, \
+    print_exception_chain
 
 
 def retry_swap(max_retries=3, exception_type=TransactionExecutionException):
@@ -23,8 +24,9 @@ def retry_swap(max_retries=3, exception_type=TransactionExecutionException):
                     if retry == max_retries - 1:  # if it's the last retry
                         raise SwapException("Exception while trying to swap") from e
                     else:
-                        logger.error(str(e))
-                        logger.error(f"Error during attempt {retry + 1}/{max_retries}: {e}. Retrying...")
+                        logger.error(f"Error during attempt {retry + 1}/{max_retries}:")
+                        print_exception_chain(e)
+                        logger.info("Retrying swap...")
                         randomized_sleeping(self.sleep_interval)
             return None
 

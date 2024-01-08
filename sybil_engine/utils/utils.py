@@ -34,6 +34,20 @@ def deprecated(func):
     return new_func
 
 
+def print_exception_chain(exception):
+    current_exception = exception
+    chain_index = 1
+
+    while current_exception:
+        exception_type = type(current_exception).__name__
+        exception_message = str(current_exception)
+
+        logger.error(f" [{chain_index}][{exception_type}]: {exception_message}")
+
+        current_exception = current_exception.__cause__
+        chain_index += 1
+
+
 class AccountException(Exception):
     def __init__(self, message):
         self.message = message
