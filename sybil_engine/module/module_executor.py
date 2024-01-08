@@ -4,7 +4,7 @@ from sybil_engine.config.app_config import get_okx
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance
 from sybil_engine.utils.accumulator import add_accumulator_str
 from sybil_engine.utils.okx import withdrawal, SUPPORTED_OKX_WITHDRAWAL
-from sybil_engine.utils.utils import randomized_sleeping, ModuleException, AccountException
+from sybil_engine.utils.utils import randomized_sleeping, ModuleException, AccountException, print_exception_chain
 
 
 class ModuleExecutor:
@@ -17,10 +17,12 @@ class ModuleExecutor:
             for module, module_args in modules:
                 self.execute_module(module_args, account, module)
         except AccountException as e:
-            logger.error(f'Error, skip account {account}: {e}')
+            logger.error(f'Error, skip {account}:')
+            print_exception_chain(e)
             add_accumulator_str("Failed accounts: ", account)
         except Exception as e:
-            logger.error(f'Error, skip account {account}: {e}')
+            logger.error(f'Error, skip {account}:')
+            print_exception_chain(e)
             add_accumulator_str("Failed accounts: ", account)
 
     def execute_module(self, module_args, account, module):
