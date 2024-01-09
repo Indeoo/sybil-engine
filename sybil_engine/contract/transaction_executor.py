@@ -54,7 +54,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
         if transaction_status == 0:
             raise TransactionExecutionException("Transaction status is 0.")
     except Exception as e:
-        raise TransactionExecutionException(f"Transaction failed. {e}") from e
+        raise TransactionExecutionException(f"Transaction failed.") from e
 
     transaction_price_wei = tx_receipt['gasUsed'] * gas_price_wei
     logger.info(f"Transaction fee: {from_wei_to_eth(transaction_price_wei)} {chain_instance['gas_token']}")
