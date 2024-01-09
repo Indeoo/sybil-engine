@@ -43,6 +43,13 @@ def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_n
 
 
 def withdrawal(addr, password, chain, cex_data, withdraw_interval):
+    amount = round(random.uniform(withdraw_interval['from'], withdraw_interval['to']), 6)
+    print(f"Withdraw {amount}ETH")
+
+    _withdrawal(addr, password, chain, cex_data, amount)
+
+
+def _withdrawal(addr, password, chain, cex_data, amount):
     api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
     flag = "0"
     withdraw_network = symbolWithdraw + '-' + networks[chain]
@@ -51,12 +58,7 @@ def withdrawal(addr, password, chain, cex_data, withdraw_interval):
 
     fee = get_withdrawal_fee(api_key, secret_key, passphrase, 'ETH', withdraw_network)
 
-    amount = round(random.uniform(withdraw_interval['from'], withdraw_interval['to']), 6)
-
-    print(f"Withdraw ETH {amount}ETH")
-
     fundingAPI.withdrawal(ccy='ETH', amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
-
 
 def get_sub_accounts(cex_data, password):
     api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
