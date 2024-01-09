@@ -93,6 +93,19 @@ def execute_starknet_bridge_transaction_internal(account, args, chain_instance, 
             randomized_sleeping({'from': 60 * 4, 'to': 60 * 8})
 
 
+def l0_evm_transaction(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        evm_decorated_func = evm_transaction(func)
+        tx_hash = evm_decorated_func(*args, **kwargs)
+
+        logger.info(f'>>> https://layerzeroscan.com/tx/{Web3.to_hex(tx_hash)}')
+
+        return tx_hash
+
+    return wrapper
+
+
 class TransactionExecutionException(Exception):
     def __init__(self, message):
         self.message = message
