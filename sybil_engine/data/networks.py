@@ -19,7 +19,8 @@ ids_chain = {
     10: 'OPTIMISM',
     137: 'POLYGON',
     43114: 'AVALANCHE',
-    42766: 'ZKFAIR'
+    42766: 'ZKFAIR',
+    42170: 'ARBITRUM_NOVA',
 }
 
 
