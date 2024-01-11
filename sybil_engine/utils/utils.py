@@ -1,4 +1,5 @@
 import time
+import traceback
 
 from loguru import logger
 from tqdm import tqdm
@@ -42,7 +43,15 @@ def print_exception_chain(exception):
         exception_type = type(current_exception).__name__
         exception_message = str(current_exception)
 
-        logger.error(f" [{chain_index}][{exception_type}]: {exception_message}")
+        # Extract traceback details
+        tb = traceback.extract_tb(current_exception.__traceback__)
+        last_call_stack = tb[-1] if tb else None  # Get the last call stack
+        filename = last_call_stack.filename if last_call_stack else 'Unknown file'
+        lineno = last_call_stack.lineno if last_call_stack else 'Unknown line'
+        func_name = last_call_stack.name if last_call_stack else 'Unknown function'
+
+        logger.error(
+            f"[{chain_index}][{exception_type}]: {exception_message} (File: {filename}, Line: {lineno}, Function: {func_name})")
 
         current_exception = current_exception.__cause__
         chain_index += 1
