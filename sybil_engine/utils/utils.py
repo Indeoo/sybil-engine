@@ -57,25 +57,31 @@ def print_exception_chain(exception):
         chain_index += 1
 
 
-class AccountException(Exception):
+class AppException(Exception):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
 
-class ConfigurationException(Exception):
+class AccountException(AppException):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
 
-class ModuleException(Exception):
+class ConfigurationException(AppException):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
 
 
-class SwapException(Exception):
+class ModuleException(AppException):
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
+
+
+class SwapException(AppException):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
