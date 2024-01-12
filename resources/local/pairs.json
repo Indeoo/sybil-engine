@@ -476,6 +476,17 @@
     ]
   },
   "BASE": {
+    "MockDex": [
+      {
+        "name": "ETH>USDC",
+        "tokens": [
+          "ETH",
+          "USDC"
+        ],
+        "amount": "all_balance",
+        "slippage": 2
+      }
+    ],
     "woofi": [
       {
         "name": "ETH>USDC",
