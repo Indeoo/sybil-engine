@@ -9,7 +9,8 @@ FEE = {
     'BNB': 0,
     'AVAX': 0,
     'FTM': 0,
-    'USDC': 0
+    'USDC': 0,
+    'CORE': 0
 }
 
 
