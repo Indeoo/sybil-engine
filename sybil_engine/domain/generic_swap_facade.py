@@ -13,7 +13,7 @@ class GenericSwapFacade:
         if dex_class is None:
             raise ConfigurationException(f"Wrong pair.py configuration for {swap_app}")
 
-        return dex_class(chain_instance, web3, **additional_args)
+        return dex_class(chain_instance, web3, 3, {'from': 1, 'to': 1}, **additional_args)
 
     def get_swap_apps(self):
         return [swap_app_name.dex_name for swap_app_name in self.get_all_swap_apps().keys()]
