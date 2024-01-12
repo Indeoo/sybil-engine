@@ -10,12 +10,15 @@ networks = {
     'ZKSYNC': 'zkSync Era',
     'LINEA': 'Linea',
     'ARBITRUM': 'Arbitrum One',
-    'BASE': 'Base'
+    'BASE': 'Base',
+    'POLYGON': 'Polygon',
+    'COREDAO': 'CORE',
 }
 symbolWithdraw = 'ETH'
 
 
 SUPPORTED_OKX_WITHDRAWAL = ['ZKSYNC', 'LINEA', 'ARBITRUM', 'BASE']
+
 
 def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_name):
     exchange = ccxt.okx({
@@ -42,23 +45,24 @@ def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_n
     raise ValueError(f"     не могу получить сумму комиссии, проверьте значения symbolWithdraw и network")
 
 
-def withdrawal(addr, password, chain, cex_data, withdraw_interval):
+def withdrawal(addr, password, chain, cex_data, withdraw_interval, gas_token='ETH'):
     amount = round(random.uniform(withdraw_interval['from'], withdraw_interval['to']), 6)
-    print(f"Withdraw {amount}ETH")
+    print(f"Withdraw {amount}{gas_token}")
 
-    _withdrawal(addr, password, chain, cex_data, amount)
+    _withdrawal(addr, password, chain, cex_data, amount, gas_token=gas_token)
 
 
-def _withdrawal(addr, password, chain, cex_data, amount):
+def _withdrawal(addr, password, chain, cex_data, amount, gas_token='ETH'):
     api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
     flag = "0"
-    withdraw_network = symbolWithdraw + '-' + networks[chain]
+    withdraw_network = gas_token + '-' + networks[chain]
 
     fundingAPI = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag, debug=False)
 
-    fee = get_withdrawal_fee(api_key, secret_key, passphrase, 'ETH', withdraw_network)
+    fee = get_withdrawal_fee(api_key, secret_key, passphrase, gas_token, withdraw_network)
 
-    fundingAPI.withdrawal(ccy='ETH', amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
+    fundingAPI.withdrawal(ccy=gas_token, amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
+
 
 def get_sub_accounts(cex_data, password):
     api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
