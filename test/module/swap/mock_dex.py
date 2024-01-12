@@ -8,7 +8,7 @@ class MockFailDex(Dex):
     dex_name = 'MockDex'
     swap_contract = 'USDC'
 
-    def __init__(self, chain_instance, web3, retries, sleeping_interval, retry_counter=0):
+    def __init__(self, chain_instance, web3, retries, sleeping_interval={'from': 0, 'to': 0}, retry_counter=0):
         self.reties = retries
         self.retry_counter = retry_counter
         super().__init__(chain_instance, web3, sleeping_interval)
