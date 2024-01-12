@@ -165,6 +165,17 @@
         "slippage": 5
       }
     ],
+    "MockDex": [
+      {
+        "name": "ETH>USDC",
+        "tokens": [
+          "ETH",
+          "USDC"
+        ],
+        "amount": "all_balance",
+        "slippage": 2
+      }
+    ],
     "mute": [
       {
         "name": "ETH>USDC",

@@ -43,7 +43,7 @@ class Pairs:
     def get_pairs_by_tokens(self, from_token, to_token, chain, swap_apps=None):
         return _get_pairs_by_swap_apps(
             swap_apps or self.swap_facade.get_swap_apps_by_chain(chain), chain,
-            pair_names=[_generate_pair_name(from_token, to_token)]
+            pairs_list=[{from_token, to_token}]
         )
 
     def get_swap_apps_by_pair(self, from_token, to_token, chain):
@@ -72,16 +72,12 @@ def _get_swap_configuration_for_chain(chain):
     return load_json_resource(config_file)[chain]
 
 
-def _generate_pair_name(from_token, to_token):
-    return f"{to_token}>{from_token}" if from_token != 'ETH' else f"{from_token}>{to_token}"
-
-
-def _get_pairs_by_swap_apps(swap_apps, chain, pair_names=None):
+def _get_pairs_by_swap_apps(swap_apps, chain, pairs_list=None):
     pairs_from_config = _get_swap_configuration_for_chain(chain)
     return [
         {**pair, 'app': swap_name}
         for swap_name, pairs in pairs_from_config.items()
         if swap_name in swap_apps
         for pair in pairs
-        if not pair_names or pair['name'] in pair_names
+        if not pairs_list or set(pair['tokens']) in pairs_list
     ]
