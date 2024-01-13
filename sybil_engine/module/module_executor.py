@@ -36,7 +36,7 @@ class ModuleExecutor:
             except Exception as e:
                 module.handle(e)
         except ModuleException as e:
-            logger.info(e.message)
+            print_exception_chain(e)
         except NotEnoughNativeBalance as e:
             okx_secret, (cex_data, auto_withdrawal, min_auto_withdraw_interval, withdraw_interval) = get_okx()
 
