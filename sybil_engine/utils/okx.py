@@ -12,6 +12,7 @@ networks = {
     'ARBITRUM': 'Arbitrum One',
     'BASE': 'Base',
     'POLYGON': 'Polygon',
+    'POLYGON_BRIDGED': 'Polygon (Bridged)',
     'COREDAO': 'CORE',
 }
 symbolWithdraw = 'ETH'
@@ -45,23 +46,29 @@ def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_n
     raise ValueError(f"     не могу получить сумму комиссии, проверьте значения symbolWithdraw и network")
 
 
-def withdrawal(addr, password, chain, cex_data, withdraw_interval, gas_token='ETH'):
+def withdrawal(addr, password, chain, cex_data, withdraw_interval, token='ETH'):
     amount = round(random.uniform(withdraw_interval['from'], withdraw_interval['to']), 6)
-    print(f"Withdraw {amount}{gas_token}")
+    print(f"Withdraw {amount}{token}")
 
-    _withdrawal(addr, password, chain, cex_data, amount, gas_token=gas_token)
+    _withdrawal(addr, password, chain, cex_data, amount, token=token)
 
 
-def _withdrawal(addr, password, chain, cex_data, amount, gas_token='ETH'):
+def _withdrawal(addr, password, chain, cex_data, amount, token='ETH'):
     api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
     flag = "0"
-    withdraw_network = gas_token + '-' + networks[chain]
+
+    if chain == 'POLYGON' and token == 'USDC':
+        network = networks["POLYGON_BRIDGED"]
+    else:
+        network = networks[chain]
+
+    withdraw_network = token + '-' + network
 
     fundingAPI = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag, debug=False)
 
-    fee = get_withdrawal_fee(api_key, secret_key, passphrase, gas_token, withdraw_network)
+    fee = get_withdrawal_fee(api_key, secret_key, passphrase, token, withdraw_network)
 
-    fundingAPI.withdrawal(ccy=gas_token, amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
+    fundingAPI.withdrawal(ccy=token, amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
 
 
 def get_sub_accounts(cex_data, password):
