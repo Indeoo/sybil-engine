@@ -1,3 +1,4 @@
+import os
 import time
 import traceback
 
@@ -32,6 +33,7 @@ def deprecated(func):
     def new_func(*args, **kwargs):
         logger.warning(f"Call to deprecated function {func.__name__}", category=DeprecationWarning, stacklevel=2)
         return func(*args, **kwargs)
+
     return new_func
 
 
@@ -46,12 +48,13 @@ def print_exception_chain(exception):
         # Extract traceback details
         tb = traceback.extract_tb(current_exception.__traceback__)
         last_call_stack = tb[-1] if tb else None  # Get the last call stack
-        filename = last_call_stack.filename if last_call_stack else 'Unknown file'
+        file_path = last_call_stack.filename if last_call_stack else 'Unknown file'
+        filename = os.path.basename(file_path)  # Get only the file name, not the full path
         lineno = last_call_stack.lineno if last_call_stack else 'Unknown line'
         func_name = last_call_stack.name if last_call_stack else 'Unknown function'
 
         logger.error(
-            f"[{chain_index}][{exception_type}]: {exception_message} (File: {filename}, Line: {lineno}, Function: {func_name})")
+            f"[{chain_index}][{exception_type}]: {exception_message} ({filename}:{lineno} in {func_name}) ({file_path})")
 
         current_exception = current_exception.__cause__
         chain_index += 1
