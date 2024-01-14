@@ -30,7 +30,7 @@ class Erc20Contract(Contract):
         txn_params = self.build_generic_data(account.address, set_contract_address=False)
 
         return self.contract.functions.transfer(
-            receive_address,
+            Web3.to_checksum_address(receive_address),
             amount.wei
         ).build_transaction(txn_params)
 
