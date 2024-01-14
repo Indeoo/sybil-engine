@@ -34,6 +34,9 @@ class Erc20Token:
     def allowance(self, account, allowance_contract):
         return self.erc20_contract.allowance(account, allowance_contract)
 
+    def transfer(self, amount, receive_address, account):
+        self.erc20_contract.transfer(account, amount, receive_address)
+
 
 class WETHToken:
     def __init__(self, chain, web3):

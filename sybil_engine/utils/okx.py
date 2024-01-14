@@ -17,7 +17,6 @@ networks = {
 }
 symbolWithdraw = 'ETH'
 
-
 SUPPORTED_OKX_WITHDRAWAL = ['ZKSYNC', 'LINEA', 'ARBITRUM', 'BASE']
 
 
@@ -104,13 +103,14 @@ def transfer_from_sub_acc(acc_name, amount, token, cex_data, password):
 
 def okx_transfer_from_sub_account(okx_secret, cex_data):
     for acc in get_sub_accounts(cex_data, okx_secret)['data']:
-        token = 'ETH'
-        acc_name = acc['subAcct']
+        tokens = ['ETH', 'CORE', 'MATIC', 'USDC']
+        for token in tokens:
+            okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token)
 
-        amount = get_sub_account_balance(acc_name, token, cex_data, okx_secret)
 
-        if amount > 0:
-            logger.info(f"Transfer {amount} {token} from {acc_name} to Main account")
-            transfer_from_sub_acc(acc_name, amount, token, cex_data, okx_secret)
-        else:
-            logger.info(f"{acc_name} is empty, no transfer required")
+def okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token):
+    acc_name = acc['subAcct']
+    amount = get_sub_account_balance(acc_name, token, cex_data, okx_secret)
+    if amount > 0:
+        logger.info(f"Transfer {amount} {token} from {acc_name} to Main account")
+        transfer_from_sub_acc(acc_name, amount, token, cex_data, okx_secret)
