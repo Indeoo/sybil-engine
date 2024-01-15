@@ -10,43 +10,26 @@ class Contract:
         if abi is not None:
             self.contract = web3.eth.contract(address=contract_address, abi=abi)
 
-    def build_generic_data(self, sender, set_contract_address=True):
+    def build_generic_data(self, sender, set_contract_address=True, eip_1599=False):
         txn_data = {
             "chainId": self.web3.eth.chain_id,
             'from': sender,
             'nonce': self.web3.eth.get_transaction_count(sender),
-            'gasPrice': self.web3.eth.gas_price,
         }
+
+        self.set_gas(eip_1599, txn_data)
 
         if set_contract_address:
             txn_data['to'] = self.contract_address
 
         return txn_data
 
-    def build_txn_params(self, from_chain_instance, from_address, gas_price_wei):
-        nonce = self.web3.eth.get_transaction_count(from_address)
-
-        if from_chain_instance['eip1599']:
-            latest_block = self.web3.eth.get_block('latest')
-            base_fee_per_gas = latest_block['baseFeePerGas']
-            return {
-                'from': from_address,
-                'nonce': nonce,
-                'gas': 10000000,
-                'maxFeePerGas': int(base_fee_per_gas * 1.6),
-            }
+    def set_gas(self, eip_1599, txn_data):
+        if eip_1599:
+            txn_data['maxFeePerGas'] = int(self.get_base_fee_per_gas() * 1.125 ** 3)
         else:
-            return {
-                'from': from_address,
-                'nonce': nonce,
-                'gas': 15000000,
-                'gasPrice': gas_price_wei
-            }
+            txn_data['gasPrice'] = self.web3.eth.gas_price
 
-    def get_gas_price(self, chain):
-        if chain == 'AVALANCHE' or chain == 'POLYGON':
-            latest_block = self.web3.eth.get_block('latest')
-            base_fee_per_gas = latest_block['baseFeePerGas']
-            return int(base_fee_per_gas * 1.8)
-        else:
-            return self.web3.eth.gas_price
+    def get_base_fee_per_gas(self):
+        latest_block = self.web3.eth.get_block('latest')
+        return latest_block['baseFeePerGas']
