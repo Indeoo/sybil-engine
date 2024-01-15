@@ -101,9 +101,8 @@ def transfer_from_sub_acc(acc_name, amount, token, cex_data, password):
     return subAccountAPI.funds_transfer(token, amount, 6, 6, type='2', subAcct=acc_name)
 
 
-def okx_transfer_from_sub_account(okx_secret, cex_data):
+def okx_transfer_from_sub_account(okx_secret, cex_data, tokens=['ETH']):
     for acc in get_sub_accounts(cex_data, okx_secret)['data']:
-        tokens = ['ETH', 'CORE', 'MATIC', 'USDC']
         for token in tokens:
             okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token)
 
