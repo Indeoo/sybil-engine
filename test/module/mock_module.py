@@ -5,8 +5,8 @@ from sybil_engine.module.module import Module
 class MockModule(Module):
     module_name = 'MockModule'
 
-    def __init__(self, min_native_balance, storage, auto_withdrawal):
-        super().__init__(min_native_balance, storage, auto_withdrawal)
+    def __init__(self, min_native_balance, storage):
+        super().__init__(min_native_balance, storage)
 
     def execute(self, account):
         logger.info("SuccessModule")
