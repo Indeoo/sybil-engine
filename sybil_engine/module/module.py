@@ -18,10 +18,9 @@ class Module:
     random_order = Order.STRICT
     repeat_conf = 'repeats'
 
-    def __init__(self, min_native_balance, storage, auto_withdrawal=False):
+    def __init__(self, min_native_balance, storage):
         self.min_native_balance = min_native_balance
         self.storage = storage
-        self.auto_withdrawal = auto_withdrawal
 
     def execute(self, *args):
         pass
@@ -48,8 +47,8 @@ class Module:
 
 class RepeatableModule(Module):
 
-    def __init__(self, min_native_balance, storage, auto_withdrawal, repeats):
-        super().__init__(min_native_balance, storage, auto_withdrawal)
+    def __init__(self, min_native_balance, storage, repeats):
+        super().__init__(min_native_balance, storage)
         self.repeats = repeats
 
     @staticmethod

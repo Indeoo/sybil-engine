@@ -29,7 +29,6 @@ def get_account_modules(default_min_native_interval, account, module_config, mod
     modules = []
 
     for module_class, module_args in module_classes:
-        auto_withdrawal = get_auto_withdrawal(module_args)
         min_native_interval = get_min_native_interval(default_min_native_interval, module_args)
 
         min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
@@ -38,10 +37,10 @@ def get_account_modules(default_min_native_interval, account, module_config, mod
             counted_repeats = repeats(module_args, module_class.repeat_conf)
             for i in counted_repeats:
                 module_with_args = (
-                    module_class(min_native_balance, storage, auto_withdrawal, len(counted_repeats)), module_args)
+                    module_class(min_native_balance, storage, len(counted_repeats)), module_args)
                 modules.append(module_with_args)
         else:
-            module_with_args = (module_class(min_native_balance, storage, auto_withdrawal), module_args)
+            module_with_args = (module_class(min_native_balance, storage), module_args)
             modules.append(module_with_args)
 
     return modules
@@ -81,12 +80,6 @@ def randomize_modules(modules):
     [random.shuffle(array) for array in arrays]
     return list(itertools.chain(*arrays))
 
-
-def get_auto_withdrawal(module_params):
-    if 'auto_withdrawal' in module_params:
-        return module_params['auto_withdrawal']
-    else:
-        return False
 
 def get_min_native_interval(default_min_native_interval, module_params):
     if 'min_native_interval' in module_params:
