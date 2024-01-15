@@ -48,3 +48,9 @@ def set_okx_config(value):
 
 def get_okx():
     return okx
+
+
+def get_okx_data():
+    _, (cex_data, _, _, _) = okx
+
+    return cex_data
