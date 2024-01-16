@@ -17,9 +17,9 @@ class TestModuleExecutor(unittest.TestCase):
         account = zksync_test_account
         min_native_balance = {'from': 0.001, 'to': 0.001}
         modules = [
-            (MockModule(min_native_balance, None, False), {}),
-            (MockModule(min_native_balance, None, False), {}),
-            (MockModule(min_native_balance, None, False), {})
+            (MockModule(min_native_balance, None), {}),
+            (MockModule(min_native_balance, None), {}),
+            (MockModule(min_native_balance, None), {})
         ]
 
         ModuleExecutor(sleep_interval).execute_modules(modules, account)
@@ -31,9 +31,9 @@ class TestModuleExecutor(unittest.TestCase):
         account = zksync_test_account
         min_native_balance = {'from': 0.001, 'to': 0.001}
         modules = [
-            (MockModule(min_native_balance, None, False), {}),
-            (MockModule(min_native_balance, None, False), {}),
-            (MockNotEnoughNativeModule(min_native_balance, None, False), {})
+            (MockModule(min_native_balance, None), {}),
+            (MockModule(min_native_balance, None), {}),
+            (MockNotEnoughNativeModule(min_native_balance, None), {})
         ]
 
         ModuleExecutor(sleep_interval).execute_modules(modules, account)
@@ -45,7 +45,7 @@ class TestModuleExecutor(unittest.TestCase):
         account = zksync_test_account
         min_native_balance = {'from': 0.001, 'to': 0.001}
 
-        module = MockFailModule(min_native_balance, None, False)
+        module = MockFailModule(min_native_balance, None)
 
         with self.assertRaises(AccountException):
             ModuleExecutor(sleep_interval).execute_module([], account, module)
@@ -55,6 +55,6 @@ class TestModuleExecutor(unittest.TestCase):
         account = zksync_test_account
         min_native_balance = {'from': 0.001, 'to': 0.001}
 
-        module = RepeatableMockModule(min_native_balance, None, False, 1)
+        module = RepeatableMockModule(min_native_balance, None, 1)
 
         ModuleExecutor(sleep_interval).execute_module([], account, module)
