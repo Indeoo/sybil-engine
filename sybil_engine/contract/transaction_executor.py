@@ -36,7 +36,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
     try:
         contract_txn = func(*args)
 
-        if 'gas' not in contract_txn and chain_instance['eip1599'] is not True:
+        if 'gas' not in contract_txn:
             contract_txn['gas'] = web3.eth.estimate_gas(contract_txn)
 
         signed_txn = web3.eth.account.sign_transaction(contract_txn, private_key=account.key)
