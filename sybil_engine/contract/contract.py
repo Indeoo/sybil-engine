@@ -10,26 +10,17 @@ class Contract:
         if abi is not None:
             self.contract = web3.eth.contract(address=contract_address, abi=abi)
 
-    def build_generic_data(self, sender, set_contract_address=True, eip_1599=False):
+    def build_generic_data(self, sender, set_contract_address=True):
         txn_data = {
             "chainId": self.web3.eth.chain_id,
             'from': sender,
             'nonce': self.web3.eth.get_transaction_count(sender),
         }
 
-        self.set_gas(eip_1599, txn_data)
+        if not self.chain_instance['eip1599']:
+            txn_data['gasPrice'] = self.web3.eth.gas_price
 
         if set_contract_address:
             txn_data['to'] = self.contract_address
 
         return txn_data
-
-    def set_gas(self, eip_1599, txn_data):
-        if eip_1599:
-            txn_data['maxFeePerGas'] = int(self.get_base_fee_per_gas() * 1.125 ** 3)
-        else:
-            txn_data['gasPrice'] = self.web3.eth.gas_price
-
-    def get_base_fee_per_gas(self):
-        latest_block = self.web3.eth.get_block('latest')
-        return latest_block['baseFeePerGas']
