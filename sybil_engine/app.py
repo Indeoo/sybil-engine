@@ -105,17 +105,16 @@ def launch_app(args, module_config, config):
     if interactive_confirmation:
         logger.info("Are you sure you want to start with this configuration? Y/n")
         choice = input()
-        if choice == "Y":
-            proceed_accounts(accounts, execution_plans, sleep_interval)
-        else:
+        if choice != "Y":
             logger.info("Exiting")
-    else:
-        proceed_accounts(accounts, execution_plans, sleep_interval)
+            return
+
+    proceed_accounts(accounts, execution_plans, sleep_interval)
 
 
 def proceed_accounts(accounts, execution_plans, sleep_interval):
     for index, (account, modules) in execution_plans:
         logger.info(f"[{index}/{len(accounts)}][{account.app_id}] {account.address}")
-        ModuleExecutor(sleep_interval).execute_modules(modules, account)
+        ModuleExecutor().execute_modules(modules, account, sleep_interval)
     print_fee()
     print_accumulated()
