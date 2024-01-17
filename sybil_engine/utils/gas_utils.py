@@ -13,26 +13,24 @@ web3_main = Web3(Web3.HTTPProvider('https://rpc.ankr.com/eth'))
 def check_gas_price(chain_instance, web3):
     while True:
         try:
-            return verify_gas_price(chain_instance, web3)
+            verify_gas_price(chain_instance, web3)
         except GasPriceToHigh as e:
             logger.info(e)
             randomized_sleeping({'from': 60 * 4, 'to': 60 * 8})
 
 
 def verify_gas_price(chain_instance, web3):
-    gas_price_wei = web3.eth.gas_price
-
-    verify_l2_gas_price(chain_instance, gas_price_wei)
+    verify_l2_gas_price(chain_instance, web3)
     verify_l1_gas_price()
 
-    return gas_price_wei
 
+def verify_l2_gas_price(chain_instance, web3):
+    gas_price_wei = web3.eth.gas_price
 
-def verify_l2_gas_price(chain_instance, gas_price_wei):
-    zksync_max_gas_price = chain_instance['gas_price_gwei']
-    if from_wei_to_gwei(gas_price_wei) > zksync_max_gas_price:
+    max_gas_price = chain_instance['gas_price_gwei']
+    if from_wei_to_gwei(gas_price_wei) > max_gas_price:
         raise GasPriceToHigh(
-            f"Gas price is to high: {from_wei_to_gwei(gas_price_wei)}Gwei, max: {zksync_max_gas_price}Gwei")
+            f"Gas price is to high: {from_wei_to_gwei(gas_price_wei)}Gwei, max: {max_gas_price}Gwei")
 
 
 def l1_gas_price(func):
@@ -41,6 +39,7 @@ def l1_gas_price(func):
         check_l1_gas_price()
 
         return func(*args, **kwargs)
+
     return wrapper
 
 
