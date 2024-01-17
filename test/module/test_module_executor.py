@@ -22,7 +22,7 @@ class TestModuleExecutor(unittest.TestCase):
             (MockModule(min_native_balance, None), {})
         ]
 
-        ModuleExecutor(sleep_interval).execute_modules(modules, account)
+        ModuleExecutor().execute_modules(modules, account, sleep_interval)
 
         self.assertEqual(get_value("Failed accounts: "), None)
 
@@ -36,7 +36,7 @@ class TestModuleExecutor(unittest.TestCase):
             (MockNotEnoughNativeModule(min_native_balance, None), {})
         ]
 
-        ModuleExecutor(sleep_interval).execute_modules(modules, account)
+        ModuleExecutor().execute_modules(modules, account, sleep_interval)
 
         self.assertEqual(len(get_value("Failed accounts: ")), 1)
 
@@ -48,7 +48,7 @@ class TestModuleExecutor(unittest.TestCase):
         module = MockFailModule(min_native_balance, None)
 
         with self.assertRaises(AccountException):
-            ModuleExecutor(sleep_interval).execute_module([], account, module)
+            ModuleExecutor().execute_module([], account, module, sleep_interval)
 
     def test_should_throwHandleExceptionOnRepeatableModuleException(self):
         sleep_interval = {'from': 0, 'to': 0}
@@ -57,4 +57,4 @@ class TestModuleExecutor(unittest.TestCase):
 
         module = RepeatableMockModule(min_native_balance, None, 1)
 
-        ModuleExecutor(sleep_interval).execute_module([], account, module)
+        ModuleExecutor().execute_module([], account, module, sleep_interval)
