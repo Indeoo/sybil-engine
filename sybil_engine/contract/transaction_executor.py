@@ -30,7 +30,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
     if web3 is None:
         web3 = func.__self__.web3
 
-    gas_price_wei = check_gas_price(chain_instance, web3)
+    check_gas_price(chain_instance, web3)
 
     try:
         contract_txn = func(*args)
@@ -53,7 +53,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
     except Exception as e:
         raise TransactionExecutionException(f"Transaction failed in {func}.") from e
 
-    transaction_price_wei = tx_receipt['gasUsed'] * gas_price_wei
+    transaction_price_wei = tx_receipt['gasUsed'] * tx_receipt['effectiveGasPrice']
     logger.info(f"Transaction fee: {from_wei_to_eth(transaction_price_wei)} {chain_instance['gas_token']}")
 
     add_fee(chain_instance['gas_token'], transaction_price_wei)
