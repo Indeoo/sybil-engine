@@ -14,6 +14,7 @@ def check_l2_gas_price(chain_instance, web3):
     while True:
         try:
             verify_l2_gas_price(chain_instance, web3)
+            return
         except GasPriceToHigh as e:
             logger.info(e)
             randomized_sleeping({'from': 60 * 4, 'to': 60 * 8})
