@@ -10,18 +10,13 @@ from sybil_engine.utils.utils import randomized_sleeping
 web3_main = Web3(Web3.HTTPProvider('https://rpc.ankr.com/eth'))
 
 
-def check_gas_price(chain_instance, web3):
+def check_l2_gas_price(chain_instance, web3):
     while True:
         try:
-            verify_gas_price(chain_instance, web3)
+            verify_l2_gas_price(chain_instance, web3)
         except GasPriceToHigh as e:
             logger.info(e)
             randomized_sleeping({'from': 60 * 4, 'to': 60 * 8})
-
-
-def verify_gas_price(chain_instance, web3):
-    verify_l2_gas_price(chain_instance, web3)
-    verify_l1_gas_price()
 
 
 def verify_l2_gas_price(chain_instance, web3):
