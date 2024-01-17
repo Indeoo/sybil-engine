@@ -31,15 +31,15 @@ def get_account_modules(default_min_native_interval, account, module_config, mod
     for module_class, module_args in module_classes:
         min_native_interval = get_min_native_interval(default_min_native_interval, module_args)
 
-        min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
-
         if issubclass(module_class, RepeatableModule):
             counted_repeats = repeats(module_args, module_class.repeat_conf)
             for i in counted_repeats:
+                min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
                 module_with_args = (
                     module_class(min_native_balance, storage, len(counted_repeats)), module_args)
                 modules.append(module_with_args)
         else:
+            min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
             module_with_args = (module_class(min_native_balance, storage), module_args)
             modules.append(module_with_args)
 
