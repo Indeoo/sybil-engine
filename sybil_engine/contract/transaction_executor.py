@@ -3,7 +3,7 @@ from web3 import Web3
 
 from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
-from sybil_engine.utils.gas_utils import l1_gas_price, check_l2_gas_price
+from sybil_engine.utils.gas_utils import l1_gas_price, check_gas_price
 from sybil_engine.utils.l0_utils import NativeFeeToHigh
 from sybil_engine.utils.utils import randomized_sleeping, deprecated
 
@@ -31,7 +31,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
     if web3 is None:
         web3 = func.__self__.web3
 
-    check_l2_gas_price(chain_instance, web3)
+    check_gas_price(web3, chain_instance['gas_price_gwei'], 'L2')
 
     try:
         contract_txn = func(*args)
