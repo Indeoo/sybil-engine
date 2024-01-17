@@ -5,7 +5,6 @@ from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
 from sybil_engine.utils.gas_utils import check_gas_price
 from sybil_engine.utils.l0_utils import NativeFeeToHigh
-from sybil_engine.utils.opti_utils import wait_for_optimism
 from sybil_engine.utils.utils import randomized_sleeping, deprecated
 
 from functools import wraps
@@ -42,8 +41,6 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
         signed_txn = web3.eth.account.sign_transaction(contract_txn, private_key=account.key)
         tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
         randomized_sleeping(chain_instance['transaction_sleep_interval'])
-
-        wait_for_optimism(chain_instance)
 
         web3.eth.wait_for_transaction_receipt(tx_hash)
 
