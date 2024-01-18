@@ -1,4 +1,8 @@
-class GenericModules:
+class Modules:
+    def __init__(self, module_map, swap_facade):
+        self.module_map = module_map
+        self.swap_facade = swap_facade
+
     def get_module_config_by_name(self, module_name, module_map):
         for key, (module_class, config) in self.get_module_map().items():
             if module_class and (module_class.module_name == module_name):
@@ -20,10 +24,11 @@ class GenericModules:
         return [module[0] for module in self.get_module_map().values()]
 
     def get_module_map(self):
-        pass
+        return self.module_map
 
     def get_swap_apps(self):
-        pass
+        return self.swap_facade.get_swap_apps()
 
     def get_supported_chains(self):
-        return ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA', 'SCROLL', 'ZKFAIR', 'ARBITRUM_NOVA']
+        return ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA',
+                'SCROLL', 'ZKFAIR', 'ARBITRUM_NOVA']

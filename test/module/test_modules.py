@@ -1,4 +1,4 @@
-from sybil_engine.module.modules import GenericModules
+from sybil_engine.module.modules import Modules
 from test.module.mock_fail_module import MockFailModule
 from test.module.mock_module import MockModule
 from test.module.repeatable_mock_module import RepeatableMockModule
@@ -9,10 +9,6 @@ module_map = {
     1002: (RepeatableMockModule, 'repeatable_mock_config')
 }
 
+swap_apps = ['RepeatableMockModule', 'MockModule', 'MockFailModule']
 
-class TestModules(GenericModules):
-    def get_module_map(self):
-        return module_map
-
-    def get_swap_apps(self):
-        return ['RepeatableMockModule', 'MockModule', 'MockFailModule']
+test_modules = Modules(module_map, swap_apps)
