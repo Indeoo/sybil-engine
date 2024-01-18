@@ -16,9 +16,6 @@ networks = {
     'COREDAO': 'CORE',
     'OPTIMISM': 'Optimism',
 }
-symbolWithdraw = 'ETH'
-
-SUPPORTED_OKX_WITHDRAWAL = ['ZKSYNC', 'LINEA', 'ARBITRUM', 'BASE']
 
 
 def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_name):
@@ -48,7 +45,7 @@ def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_n
 
 def withdrawal(addr, password, chain, cex_data, withdraw_interval, token='ETH'):
     amount = round(random.uniform(withdraw_interval['from'], withdraw_interval['to']), 6)
-    print(f"Withdraw {amount}{token}")
+    logger.info(f"Withdraw {amount}{token}")
 
     _withdrawal(addr, password, chain, cex_data, amount, token=token)
 
