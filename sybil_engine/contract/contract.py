@@ -1,5 +1,4 @@
 from sybil_engine.data.networks import ids_chain, get_chain_instance
-from sybil_engine.utils.utils import deprecated
 
 
 class Contract:
@@ -25,33 +24,3 @@ class Contract:
             txn_data['to'] = self.contract_address
 
         return txn_data
-
-    @deprecated
-    def build_txn_params(self, from_chain_instance, from_address, gas_price_wei):
-        nonce = self.web3.eth.get_transaction_count(from_address)
-
-        if from_chain_instance['eip1599']:
-            latest_block = self.web3.eth.get_block('latest')
-            base_fee_per_gas = latest_block['baseFeePerGas']
-            return {
-                'from': from_address,
-                'nonce': nonce,
-                'gas': 10000000,
-                'maxFeePerGas': int(base_fee_per_gas * 1.6),
-            }
-        else:
-            return {
-                'from': from_address,
-                'nonce': nonce,
-                'gas': 15000000,
-                'gasPrice': gas_price_wei
-            }
-
-    @deprecated
-    def get_gas_price(self, chain):
-        if chain == 'AVALANCHE' or chain == 'POLYGON':
-            latest_block = self.web3.eth.get_block('latest')
-            base_fee_per_gas = latest_block['baseFeePerGas']
-            return int(base_fee_per_gas * 1.8)
-        else:
-            return self.web3.eth.gas_price
