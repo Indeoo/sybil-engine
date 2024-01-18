@@ -18,6 +18,7 @@ def evm_transaction(func):
         args = instance, account, *args
 
         return execute_transaction_internal(func, args, chain_instance, account, web3)
+
     return wrapper
 
 
@@ -39,10 +40,10 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
         if 'gas' not in contract_txn:
             contract_txn['gas'] = web3.eth.estimate_gas(contract_txn)
 
-        signed_txn = web3.eth.account.sign_transaction(contract_txn, private_key=account.key)
+        signed_txn = account.sign_transaction(contract_txn, private_key=account.key)
         tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
-        randomized_sleeping(chain_instance['transaction_sleep_interval'])
 
+        randomized_sleeping(chain_instance['transaction_sleep_interval'])
         web3.eth.wait_for_transaction_receipt(tx_hash)
 
         logger.info(f">>> {chain_instance['scan']}/{Web3.to_hex(tx_hash)}")
@@ -70,6 +71,7 @@ def evm_starknet_transaction(func):
         args = instance, account, *args
 
         return execute_starknet_bridge_transaction_internal(func, args, chain_instance, account, web3)
+
     return wrapper
 
 
