@@ -1,7 +1,7 @@
 import argparse
 import os
 
-from test.module.test_modules import TestModules
+from test.module.test_modules import test_modules
 
 cdir = os.getcwd()
 proxy_file = f'{cdir}/tests/proxy.txt'
@@ -24,9 +24,6 @@ def scenario_from_module(module_config, scenario_name):
             module_config
         ]
     }
-
-
-test_modules_data = TestModules()
 
 
 def create_config():
@@ -58,4 +55,4 @@ def create_config():
 
     okx_config = (cex_data, auto_withdrawal, withdraw_interval)
 
-    return test_modules_data, encryption, min_native_interval, proxy_mode, okx_config, sleep_interval, swap_retry_sleep_interval, gas_prices
+    return test_modules, encryption, min_native_interval, proxy_mode, okx_config, sleep_interval, swap_retry_sleep_interval, gas_prices

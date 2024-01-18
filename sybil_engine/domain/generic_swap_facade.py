@@ -2,6 +2,10 @@ from sybil_engine.utils.utils import ConfigurationException
 
 
 class GenericSwapFacade:
+    def __init__(self, dex_classes, swap_apps):
+        self.dex_classes = dex_classes
+        self.swap_apps = swap_apps
+
     def swap(self, account, amount_to_swap, chain_instance, pair, swap_app, from_token, to_token, web3):
         slippage_coef = 1 - pair['slippage'] * 0.01
 
@@ -24,7 +28,7 @@ class GenericSwapFacade:
         return [swap_app_name.dex_name for swap_app_name in filtered_apps.keys()]
 
     def get_all_swap_apps(self):
-        pass
+        return self.swap_apps
 
     def get_dex_classes(self, pair):
-        pass
+        return self.dex_classes

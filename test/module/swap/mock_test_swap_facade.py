@@ -3,16 +3,20 @@ from test.module.swap.mock_dex import MockFailDex
 
 
 class MockTestSwapFacade(GenericSwapFacade):
+    def __init__(self, dex_classes, swap_apps):
+        super().__init__(dex_classes, swap_apps)
 
     def get_dex_classes(self, pair):
         return {
             MockFailDex.dex_name: (MockFailDex, {})
         }
 
-    def get_all_swap_apps(self):
-        return {
-            MockFailDex: ['ZKSYNC', 'LINEA']
-        }
 
-
-swap_facade = MockTestSwapFacade()
+swap_facade = MockTestSwapFacade(
+    {
+        MockFailDex.dex_name: (MockFailDex, {})
+    },
+    {
+        MockFailDex: ['ZKSYNC', 'LINEA']
+    }
+)
