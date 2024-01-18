@@ -14,6 +14,7 @@ networks = {
     'POLYGON': 'Polygon',
     'POLYGON_BRIDGED': 'Polygon (Bridged)',
     'COREDAO': 'CORE',
+    'OPTIMISM': 'Optimism',
 }
 symbolWithdraw = 'ETH'
 
