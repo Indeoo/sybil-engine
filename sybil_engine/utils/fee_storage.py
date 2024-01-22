@@ -1,8 +1,8 @@
+from collections import defaultdict
+
 from loguru import logger
 
 from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
-from sybil_engine.utils.binance_prices import get_binance_price
-from collections import defaultdict
 
 FEE = defaultdict(int)
 
@@ -20,4 +20,4 @@ def print_fee():
     #     amount = amount + float(from_wei_to_eth(fee)) * price
 
     logger.info(f"Total native fee is: {converted_dict}")
-    #logger.info(f"Approximate USD cost: {amount}")
+    # logger.info(f"Approximate USD cost: {amount}")

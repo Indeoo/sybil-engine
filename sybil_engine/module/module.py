@@ -1,10 +1,10 @@
+from enum import Enum
 from functools import wraps
 
 from loguru import logger
 
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance
 from sybil_engine.utils.utils import ConfigurationException, ModuleException
-from enum import Enum
 
 
 class Order(Enum):
