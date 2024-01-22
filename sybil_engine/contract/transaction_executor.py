@@ -4,7 +4,6 @@ from web3 import Web3
 from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
 from sybil_engine.utils.gas_utils import l1_gas_price, check_gas_price
-from sybil_engine.utils.l0_utils import NativeFeeToHigh
 from sybil_engine.utils.utils import randomized_sleeping, deprecated
 
 from functools import wraps
@@ -75,22 +74,12 @@ def evm_starknet_transaction(func):
     return wrapper
 
 
-@deprecated
-def execute_starknet_bridge_transaction(func, args, chain_instance, account, web3):
-    return execute_starknet_bridge_transaction_internal(account, args, chain_instance, func, web3)
-
-
 def execute_starknet_bridge_transaction_internal(account, args, chain_instance, func, web3):
-    while True:
-        try:
-            tx_hash = execute_transaction_internal(func, args, chain_instance, account, web3)
+    tx_hash = execute_transaction_internal(func, args, chain_instance, account, web3)
 
-            logger.info(f'>>> https://starkscan.co/contract/{account.starknet_address}#token-transfers')
+    logger.info(f'>>> https://starkscan.co/contract/{account.starknet_address}#token-transfers')
 
-            return tx_hash
-        except NativeFeeToHigh as e:
-            logger.info(e)
-            randomized_sleeping({'from': 60 * 4, 'to': 60 * 8})
+    return tx_hash
 
 
 def l0_evm_transaction(func):
