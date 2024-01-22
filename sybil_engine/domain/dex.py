@@ -1,5 +1,3 @@
-import functools
-
 from loguru import logger
 
 from sybil_engine.config.app_config import get_dex_retry_interval
@@ -9,30 +7,8 @@ from sybil_engine.data.tokens import get_tokens_for_chain
 from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
 from sybil_engine.utils.gas_utils import l1_gas_price
-from sybil_engine.utils.utils import SwapException, randomized_sleeping, AccountException, deprecated, \
-    print_exception_chain
-
-
-def retry_swap(max_retries=3, exception_type=TransactionExecutionException):
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self, *args, **kwargs):
-            for retry in range(max_retries):
-                try:
-                    return func(self, *args, **kwargs)
-                except exception_type as e:
-                    if retry == max_retries - 1:  # if it's the last retry
-                        raise SwapException("Exception while trying to swap") from e
-                    else:
-                        logger.error(f"Error during attempt {retry + 1}/{max_retries}:")
-                        print_exception_chain(e)
-                        logger.info("Retrying swap...")
-                        randomized_sleeping(self.sleep_interval)
-            return None
-
-        return wrapper
-
-    return decorator
+from sybil_engine.utils.retry import retry_self
+from sybil_engine.utils.utils import SwapException, AccountException, deprecated
 
 
 class Dex:
@@ -46,11 +22,11 @@ class Dex:
         self.web3 = web3
 
         if sleep_interval is None:
-            self.sleep_interval = get_dex_retry_interval()
+            self.retry_interval = get_dex_retry_interval()
         else:
-            self.sleep_interval = sleep_interval
+            self.retry_interval = sleep_interval
 
-    @retry_swap(max_retries=3, exception_type=TransactionExecutionException)
+    @retry_self(max_attempts=3, expected_exception=TransactionExecutionException)
     @l1_gas_price
     def swap(self, amount_to_swap, from_token, to_token, slippage, account):
         if amount_to_swap.wei == 0 and amount_to_swap.token != self.chain_instance['gas_token']:
