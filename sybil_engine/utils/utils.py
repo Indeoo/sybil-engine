@@ -1,10 +1,10 @@
 import os
+import random
 import time
 import traceback
 
 from loguru import logger
 from tqdm import tqdm
-import random
 
 
 def int_to_decimal(qty, decimal):
@@ -17,7 +17,7 @@ def randomized_sleeping(sleep_interval):
     if x == 0:
         return
 
-    for i in tqdm(range(x), desc='sleep ', bar_format='{desc}: {n_fmt}/{total_fmt}'):
+    for _ in tqdm(range(x), desc='sleep ', bar_format='{desc}: {n_fmt}/{total_fmt}'):
         time.sleep(1)
 
 

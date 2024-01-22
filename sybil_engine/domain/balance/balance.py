@@ -1,5 +1,6 @@
-from sybil_engine.utils.utils import AccountException
 from _decimal import Decimal, ROUND_DOWN
+
+from sybil_engine.utils.utils import AccountException
 
 
 class Balance:

@@ -1,3 +1,5 @@
+from functools import wraps
+
 from loguru import logger
 from web3 import Web3
 
@@ -5,8 +7,6 @@ from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
 from sybil_engine.utils.gas_utils import l1_gas_price, check_gas_price
 from sybil_engine.utils.utils import randomized_sleeping, deprecated
-
-from functools import wraps
 
 
 def evm_transaction(func):

@@ -75,7 +75,7 @@ def get_sub_accounts(cex_data, password):
 
     subAccountAPI = SubAccount.SubAccountAPI(api_key, secret_key, passphrase, False, flag, debug=False)
 
-    # Get sub-account list
+    # Get subaccount list
     return subAccountAPI.get_subaccount_list()
 
 

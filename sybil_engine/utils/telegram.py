@@ -1,4 +1,5 @@
 import telebot
+
 from sybil_engine.utils.utils import ConfigurationException
 
 telegram_api_key = None
