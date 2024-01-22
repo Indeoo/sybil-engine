@@ -6,7 +6,7 @@ from sybil_engine.contract.transaction_executor import TransactionExecutionExcep
 from sybil_engine.utils.utils import print_exception_chain, randomized_sleeping, SwapException
 
 
-def retry(max_attempts=3, sleep_interval={'from': 60 * 5, 'to': 60 * 10}, expected_exception=Exception,
+def retry(max_attempts=3, retry_interval={'from': 60 * 5, 'to': 60 * 10}, expected_exception=Exception,
           throw_exception=Exception):
     def decorator(func):
         @functools.wraps(func)
@@ -16,7 +16,7 @@ def retry(max_attempts=3, sleep_interval={'from': 60 * 5, 'to': 60 * 10}, expect
                 try:
                     return func(*args, **kwargs)
                 except expected_exception as e:
-                    attempts = handle(attempts, max_attempts, e, sleep_interval, throw_exception, func)
+                    attempts = handle(attempts, max_attempts, e, retry_interval, throw_exception, func)
 
         return wrapper
 
@@ -39,12 +39,12 @@ def retry_self(max_attempts=3, expected_exception=TransactionExecutionException,
     return decorator
 
 
-def handle(attempts, max_attempts, e, sleep_interval, throw_exception, func):
+def handle(attempts, max_attempts, e, retry, throw_exception, func):
     attempts += 1
     logger.error(f"Error during attempt {attempts}/{max_attempts}:")
     print_exception_chain(e)
     if attempts < max_attempts:
-        randomized_sleeping(sleep_interval)
+        randomized_sleeping(retry)
     else:
         raise throw_exception(f"Function {func.__name__} failed after {max_attempts} attempts") from e
     return attempts
