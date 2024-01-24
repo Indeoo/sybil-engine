@@ -24,7 +24,8 @@ ids_chain = {
     42170: 'ARBITRUM_NOVA',
     1116: 'COREDAO',
     169: 'MANTA',
-    7777777: 'ZORA'
+    7777777: 'ZORA',
+    1101: 'POLYGON_ZK'
 }
 
 
