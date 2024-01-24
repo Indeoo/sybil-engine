@@ -31,4 +31,4 @@ class Modules:
 
     def get_supported_chains(self):
         return ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA',
-                'SCROLL', 'ZKFAIR', 'ARBITRUM_NOVA', 'MANTA']
+                'SCROLL', 'ZKFAIR', 'ARBITRUM_NOVA', 'MANTA', 'ZORA']
