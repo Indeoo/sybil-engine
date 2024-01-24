@@ -43,7 +43,7 @@ def get_chain_instance_for_network(chain: str, network: str):
     gas_prices_gwei = get_gas_prices()
     rpc['l1_gas_price_gwei'] = gas_prices_gwei['ETH_MAINNET']
     if 'gas_price_gwei' not in rpc:
-        if chain not in gas_prices_gwei[chain]:
+        if chain not in gas_prices_gwei:
             raise ConfigurationException(f"Gas price for {chain} not found in gas_price_gwei")
         rpc['gas_price_gwei'] = gas_prices_gwei[chain]
 
