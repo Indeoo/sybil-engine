@@ -1,3 +1,7 @@
+from sybil_engine.config.app_config import get_network
+from sybil_engine.data.networks import get_rpcs
+
+
 class Modules:
     def __init__(self, module_map, swap_facade):
         self.module_map = module_map
@@ -30,5 +34,4 @@ class Modules:
         return self.swap_facade.get_swap_apps()
 
     def get_supported_chains(self):
-        return ['ZKSYNC', 'ARBITRUM', 'BASE', 'BSC', 'POLYGON', 'AVALANCHE', 'OPTIMISM', 'FANTOM', 'STARKNET', 'LINEA',
-                'SCROLL', 'ZKFAIR', 'ARBITRUM_NOVA', 'MANTA', 'ZORA', 'POLYGON_ZK']
+        return list(get_rpcs(get_network()).copy().keys())
