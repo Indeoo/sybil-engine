@@ -1,4 +1,4 @@
-from sybil_engine.data.networks import ids_chain, get_chain_instance
+from sybil_engine.data.networks import get_chain_instance, get_ids_chain
 
 
 class Contract:
@@ -6,7 +6,7 @@ class Contract:
     def __init__(self, contract_address, web3, abi=None):
         self.contract_address = contract_address
         self.web3 = web3
-        self.chain_instance = get_chain_instance(ids_chain[web3.eth.chain_id])
+        self.chain_instance = get_chain_instance(get_ids_chain()[web3.eth.chain_id])
         if abi is not None:
             self.contract = web3.eth.contract(address=contract_address, abi=abi)
 
