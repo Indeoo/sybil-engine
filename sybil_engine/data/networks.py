@@ -1,6 +1,7 @@
 from sybil_engine.config.app_config import get_network, get_gas_prices
 from sybil_engine.data.exception import NetworkNotFoundException
 from sybil_engine.utils.file_loader import load_json_resource
+from sybil_engine.utils.utils import ConfigurationException
 
 ids_chain = {
     324: 'ZKSYNC',  # MAIN
@@ -42,6 +43,8 @@ def get_chain_instance_for_network(chain: str, network: str):
     gas_prices_gwei = get_gas_prices()
     rpc['l1_gas_price_gwei'] = gas_prices_gwei['ETH_MAINNET']
     if 'gas_price_gwei' not in rpc:
+        if chain not in gas_prices_gwei[chain]:
+            raise ConfigurationException(f"Gas price for {chain} not found in gas_price_gwei")
         rpc['gas_price_gwei'] = gas_prices_gwei[chain]
 
     rpc['chain'] = chain
