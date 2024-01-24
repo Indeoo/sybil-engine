@@ -3,36 +3,9 @@ from sybil_engine.data.exception import NetworkNotFoundException
 from sybil_engine.utils.file_loader import load_json_resource
 from sybil_engine.utils.utils import ConfigurationException
 
-main_ids = {
-    324: 'ZKSYNC',
-    42161: 'ARBITRUM',
-    59144: 'LINEA',
-    534352: 'SCROLL',
-    8453: 'BASE',
-    56: 'BSC',
-    250: 'FANTOM',
-    10: 'OPTIMISM',
-    137: 'POLYGON',
-    43114: 'AVALANCHE',
-    42766: 'ZKFAIR',
-    42170: 'ARBITRUM_NOVA',
-    1116: 'COREDAO',
-    169: 'MANTA',
-    7777777: 'ZORA',
-    1101: 'POLYGON_ZK'
-}
-
-local_ids = {
-    260: 'ZKSYNC',
-    421613: 'ARBITRUM',
-    559144: 'LINEA',
-    5534352: 'SCROLL',
-    18453: 'BASE',
-}
-
 
 def get_ids_chain():
-    return main_ids.copy() if get_network() == 'MAIN' else local_ids.copy()
+    return {info["chain_id"]: chain for chain, info in get_rpcs(get_network()).items()}
 
 
 def get_chain_instance(chain: str):
