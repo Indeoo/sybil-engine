@@ -22,7 +22,8 @@ ids_chain = {
     42766: 'ZKFAIR',
     42170: 'ARBITRUM_NOVA',
     1116: 'COREDAO',
-    169: 'MANTA'
+    169: 'MANTA',
+    7777777: 'ZORA'
 }
 
 
