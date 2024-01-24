@@ -21,7 +21,8 @@ ids_chain = {
     43114: 'AVALANCHE',
     42766: 'ZKFAIR',
     42170: 'ARBITRUM_NOVA',
-    1116: 'COREDAO'
+    1116: 'COREDAO',
+    169: 'MANTA'
 }
 
 
