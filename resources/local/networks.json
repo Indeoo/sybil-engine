@@ -4,7 +4,7 @@
     "poa": false,
     "eip1599": false,
     "stargate_usdc_pool": 1,
-    "chain_id": 324,
+    "chain_id": 18453,
     "rpc": "http://65.109.24.46:8011",
     "scan": "https://explorer.zksync.io/tx",
     "transaction_sleep_interval": {
@@ -55,41 +55,47 @@
     "transaction_sleep_interval": {
       "from": 0,
       "to": 0
-    }
+    },
+    "chain_id": 43114
   },
   "BSC": {
     "gas_token": "BNB",
     "poa": false,
     "eip1599": false,
     "usdc_pool": 2,
-    "stargate_usdc_pool": 1
+    "stargate_usdc_pool": 1,
+    "chain_id": 43114
   },
   "FANTOM": {
     "gas_token": "FTM",
     "poa": false,
     "eip1599": false,
     "usdc_pool": 1,
-    "stargate_usdc_pool": 21
+    "stargate_usdc_pool": 21,
+    "chain_id": 43114
   },
   "OPTIMISM": {
     "gas_token": "ETH",
     "poa": false,
     "eip1599": false,
     "usdc_pool": 1,
-    "stargate_usdc_pool": 1
+    "stargate_usdc_pool": 1,
+    "chain_id": 43114
   },
   "POLYGON": {
     "gas_token": "MATIC",
     "poa": true,
     "eip1599": false,
     "usdc_pool": 1,
-    "stargate_usdc_pool": 1
+    "stargate_usdc_pool": 1,
+    "chain_id": 43114
   },
   "AVALANCHE": {
     "gas_token": "AVAX",
     "poa": true,
     "eip1599": false,
     "usdc_pool": 1,
-    "stargate_usdc_pool": 1
+    "stargate_usdc_pool": 1,
+    "chain_id": 43114
   }
 }
