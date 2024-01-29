@@ -1,7 +1,7 @@
 from loguru import logger
 
 from sybil_engine.utils.accumulator import add_accumulator_str
-from sybil_engine.utils.utils import randomized_sleeping, ModuleException, print_exception_chain
+from sybil_engine.utils.utils import randomized_sleeping, ModuleException, print_exception_chain, ConfigurationException
 
 
 class ModuleExecutor:
@@ -9,6 +9,8 @@ class ModuleExecutor:
         try:
             for module, module_args in modules:
                 self.execute_module(module_args, account, module, sleep_interval)
+        except ConfigurationException as e:
+            raise Exception(f"Configuration error in {module.module_name}: {e}")
         except Exception as e:
             logger.error(f'Error, skip {account}:')
             print_exception_chain(e)
