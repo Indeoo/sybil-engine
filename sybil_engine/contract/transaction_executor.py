@@ -6,7 +6,7 @@ from web3 import Web3
 from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
 from sybil_engine.utils.fee_storage import add_fee
 from sybil_engine.utils.gas_utils import l1_gas_price, check_gas_price
-from sybil_engine.utils.utils import randomized_sleeping, deprecated
+from sybil_engine.utils.utils import randomized_sleeping, deprecated, AppException
 
 
 def evm_transaction(func):
@@ -95,7 +95,7 @@ def l0_evm_transaction(func):
     return wrapper
 
 
-class TransactionExecutionException(Exception):
+class TransactionExecutionException(AppException):
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
