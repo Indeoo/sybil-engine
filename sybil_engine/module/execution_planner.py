@@ -4,7 +4,7 @@ import random
 from sybil_engine.domain.account_storage import AccountStorage
 from sybil_engine.domain.balance.balance_utils import interval_to_native_balance
 from sybil_engine.module.module import RepeatableModule, Order
-from sybil_engine.utils.utils import interval_to_int
+from sybil_engine.utils.utils import interval_to_int, ConfigurationException
 
 
 def create_execution_plans(accounts, min_native_interval, module_config, modules_data):
@@ -35,14 +35,18 @@ def get_account_modules(default_min_native_interval, account, module_config, mod
             counted_repeats = repeats(module_args, module_class.repeat_conf)
             for i in counted_repeats:
                 min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
-                module_with_args = (
-                    module_class(min_native_balance, storage, len(counted_repeats)), module_args)
+                module_with_args = (module_class(min_native_balance, storage, len(counted_repeats)), module_args)
                 modules.append(module_with_args)
         else:
             min_native_balance = interval_to_native_balance(min_native_interval, account, None, None)
             module_with_args = (module_class(min_native_balance, storage), module_args)
             modules.append(module_with_args)
 
+        for module, module_args in modules:
+            try:
+                module.parse_params(module_args)
+            except Exception as e:
+                raise ConfigurationException(f"Error in {module.module_name} configuration") from e
     return modules
 
 
