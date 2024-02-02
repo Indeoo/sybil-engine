@@ -1,7 +1,10 @@
 import random
 from typing import Optional, Any
 
+import requests
 from loguru import logger
+from requests.adapters import HTTPAdapter
+from urllib3 import Retry
 from web3 import Web3
 from web3.middleware import geth_poa_middleware
 
@@ -12,10 +15,25 @@ from sybil_engine.domain.balance.tokens import Erc20Token
 
 
 def init_web3(chain_instance, proxy: Optional[Any]):
+    # Define retry strategy
+    retry_strategy = Retry(
+        total=5,  # Total number of retries to allow
+        status_forcelist=[429, 443, 500, 502, 503, 504],  # Status codes to retry for
+        allowed_methods=["HEAD", "GET", "POST"],  # HTTP methods to retry
+        backoff_factor=3,  # Backoff factor to apply between attempts
+    )
+
+    # Create a session with the retry strategy
+    session = requests.Session()
+    adapter = HTTPAdapter(max_retries=retry_strategy)
+    session.mount('http://', adapter)
+    session.mount('https://', adapter)
+
     if proxy is not None:
-        provider = Web3.HTTPProvider(chain_instance['rpc'], request_kwargs={"proxies": {'https': proxy, 'http': proxy}})
+        provider = Web3.HTTPProvider(chain_instance['rpc'], request_kwargs={"proxies": {'https': proxy, 'http': proxy}},
+                                     session=session)
     else:
-        provider = Web3.HTTPProvider(endpoint_uri=chain_instance['rpc'])
+        provider = Web3.HTTPProvider(endpoint_uri=chain_instance['rpc'], session=session)
 
     web3 = Web3(provider=provider)
 
@@ -23,6 +41,12 @@ def init_web3(chain_instance, proxy: Optional[Any]):
         web3.middleware_onion.inject(geth_poa_middleware, layer=0)
 
     return web3
+
+
+def log_retry(retry_state):
+    # Log the retry attempt number and the delay before the next retry
+    logger.info(f"Retry attempt: {retry_state.retry_count}. Delaying for {retry_state.backoff} seconds before next retry.")
+
 
 
 def get_amount_to_bridge_usdc(bridge_amount_interval):
