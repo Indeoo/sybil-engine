@@ -3,6 +3,7 @@ dex_retry_interval = None
 gas_prices_gwei = None
 module_data = None
 okx = None, (None, None, None, None)
+binance = None, None
 
 
 def set_network(value):
@@ -54,3 +55,11 @@ def get_okx_data():
     _, (cex_data, _, _, _) = okx
 
     return cex_data
+
+def set_binance_config(value):
+    global binance
+    binance = value
+
+
+def get_binance():
+    return binance
