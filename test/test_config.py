@@ -46,7 +46,7 @@ def create_config():
         'POLYGON': 150
     }
 
-    # OKX configuration !!!CURRENTLY ONLY FOR ZKSYNC!!!
+    # CEX configuration !!!CURRENTLY ONLY FOR ZKSYNC!!!
     cex_data = ''
     auto_withdrawal = False
     withdraw_interval = {'from': 0.01, 'to': 0.015}
