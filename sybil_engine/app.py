@@ -1,7 +1,7 @@
 from loguru import logger
 
 from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data, \
-    set_okx_config
+    set_okx_config, set_binance_config
 from sybil_engine.module.execution_planner import create_execution_plans
 from sybil_engine.module.module_executor import ModuleExecutor
 from sybil_engine.utils.accumulator import print_accumulated
@@ -59,10 +59,13 @@ def prepare_launch_without_data(modules_data_file):
         module_map['min_native_interval'],
         config_map['proxy_mode'],
         (
-            config_map['cex_data'],
+            config_map['cex_data']['okx'],
             config_map.get('auto_withdrawal', False),
             config_map.get('min_auto_withdraw_interval', {'from': 0.1, 'to': 0.2}),
             config_map['withdraw_interval']
+        ),
+        (
+          config_map['cex_data']['binance']
         ),
         module_map['sleep_interval'],
         module_map['swap_retry_sleep_interval'],
@@ -82,7 +85,7 @@ def get_module_name(module):
 
 
 def launch_app(args, module_config, config):
-    (modules_data, encryption, min_native_interval, proxy_mode, okx, sleep_interval, swap_retry_sleep_interval,
+    (modules_data, encryption, min_native_interval, proxy_mode, okx, binance, sleep_interval, swap_retry_sleep_interval,
      gas_price, account_creation_mode, interactive_confirmation) = config
 
     set_network(args.network)
@@ -90,6 +93,7 @@ def launch_app(args, module_config, config):
     set_gas_prices(gas_price)
     set_module_data(modules_data)
     set_okx_config((args.password.encode('utf-8'), okx))
+    set_binance_config((args.password.encode('utf-8'), binance))
 
     logger.info(f"START {module_config['scenario_name']} module in {args.network}")
 

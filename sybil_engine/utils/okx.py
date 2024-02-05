@@ -1,10 +1,8 @@
-import random
-
 import ccxt
 from loguru import logger
 from okx import Funding, SubAccount
 
-from sybil_engine.utils.decryptor import decrypt_okx_api
+from sybil_engine.utils.decryptor import decrypt_cex_data
 
 networks = {
     'ZKSYNC': 'zkSync Era',
@@ -43,15 +41,8 @@ def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_n
     raise ValueError(f"     не могу получить сумму комиссии, проверьте значения symbolWithdraw и network")
 
 
-def withdrawal(addr, password, chain, cex_data, withdraw_interval, token='ETH'):
-    amount = round(random.uniform(withdraw_interval['from'], withdraw_interval['to']), 6)
-    logger.info(f"Withdraw {amount}{token}")
-
-    _withdrawal(addr, password, chain, cex_data, amount, token=token)
-
-
-def _withdrawal(addr, password, chain, cex_data, amount, token='ETH'):
-    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+def withdrawal(addr, password, chain, cex_data, withdraw_amount, token='ETH'):
+    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
     flag = "0"
 
     if chain == 'POLYGON' and token == 'USDC':
@@ -65,11 +56,11 @@ def _withdrawal(addr, password, chain, cex_data, amount, token='ETH'):
 
     fee = get_withdrawal_fee(api_key, secret_key, passphrase, token, withdraw_network)
 
-    fundingAPI.withdrawal(ccy=token, amt=amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
+    fundingAPI.withdrawal(ccy=token, amt=withdraw_amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
 
 
 def get_sub_accounts(cex_data, password):
-    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
 
     flag = "0"  # Production trading: 0, Demo trading: 1
 
@@ -80,7 +71,7 @@ def get_sub_accounts(cex_data, password):
 
 
 def get_sub_account_balance(acc_name, token, cex_data, password):
-    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
 
     flag = "0"
 
@@ -90,7 +81,7 @@ def get_sub_account_balance(acc_name, token, cex_data, password):
 
 
 def transfer_from_sub_acc(acc_name, amount, token, cex_data, password):
-    api_key, secret_key, passphrase = decrypt_okx_api(cex_data, password).split(',')
+    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
 
     flag = "0"
 
