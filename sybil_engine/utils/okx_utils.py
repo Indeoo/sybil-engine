@@ -102,3 +102,14 @@ def okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token):
     if amount > 0:
         logger.info(f"Transfer {amount} {token} from {acc_name} to Main account")
         transfer_from_sub_acc(acc_name, amount, token, cex_data, okx_secret)
+
+
+def get_okx_deposit_addresses(password, cex_data):
+    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
+
+    flag = "0"
+
+    subAccountAPI = Funding.FundingAPI(api_key, secret_key, passphrase, False, flag, debug=False)
+    sub_accounts = subAccountAPI.get_deposit_address('ETH')['data']
+
+    return [sub_account['addr'] for sub_account in sub_accounts]

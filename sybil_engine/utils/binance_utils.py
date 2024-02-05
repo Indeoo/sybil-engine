@@ -52,3 +52,18 @@ def binance_withdrawal(binance_secret, password, amount, token, address):
     client = Spot(api_key=apiKey, api_secret=secretKey)
 
     client.withdraw(token, amount, address)
+
+
+def get_binance_deposit_addresses(password, cex_data):
+    apiKey, secretKey = decrypt_cex_data(cex_data, password)
+
+    client = Spot(api_key=apiKey, api_secret=secretKey)
+
+    emails = get_sub_accounts(apiKey, secretKey)
+
+    deposit_addresses = []
+
+    for email in emails:
+        deposit_addresses = deposit_addresses + client.sub_account_deposit_address(email, 'ETH')
+
+    return deposit_addresses

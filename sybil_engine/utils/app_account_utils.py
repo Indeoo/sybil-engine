@@ -5,6 +5,7 @@ from eth_account import Account
 from loguru import logger
 from web3 import Web3
 
+from sybil_engine.utils.cex_utils import get_cex_addresses
 from sybil_engine.utils.csv_reader import read_csv_rows
 from sybil_engine.utils.decryptor import decrypt_private_key
 from sybil_engine.utils.file_loader import load_file_rows
@@ -14,7 +15,7 @@ from sybil_engine.utils.wallet_loader import load_addresses
 
 def create_app_account(args, encryption, proxy_mode, account_creation_mode):
     if account_creation_mode == 'TXT' or account_creation_mode is None:
-        return create_app_accounts_from_txt(
+        accounts = create_app_accounts_from_txt(
             args.private_keys,
             (proxy_mode, args.proxy_file),
             args.cex_addresses,
@@ -23,9 +24,13 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode):
             encryption
         )
     elif account_creation_mode == 'CSV':
-        return create_app_accounts_from_csv(args.account_csv, args.password.encode('utf-8'), encryption)
+        accounts = create_app_accounts_from_csv(args.account_csv, args.password.encode('utf-8'), encryption)
     else:
         raise ConfigurationException("account_creation_mode should be CSV or TXT")
+
+    validate_cex_addresses(accounts, get_cex_addresses())
+
+    return accounts
 
 
 def create_app_accounts_from_txt(private_keys, proxy_config, cex_addresses, starknet_addresses, password, encryption):
@@ -143,6 +148,26 @@ def create_app_account_with_proxies(cex_addresses, encryption, password, private
     random.shuffle(app_accounts)
 
     return app_accounts
+
+def validate_cex_addresses(app_accounts, cex_addresses):
+    # Initialize an empty list to hold any cex_addresses not found in the cex_addresses list
+    missing_addresses_accounts = []
+
+    # Loop through each account in app_accounts
+    for account in app_accounts:
+        # Check if the cex_address of the current account is not in cex_addresses
+        if account.cex_address not in cex_addresses:
+            # If not found, add it to the list of missing_addresses_accounts
+            missing_addresses_accounts.append(account)
+
+    # If there are any missing addresses, log them and raise an exception
+    if missing_addresses_accounts:
+        for missing_addresses_account in missing_addresses_accounts:
+            # Log the missing addresses. Adjust logging based on your environment or logging setup
+            error_log = f"Account {missing_addresses_account} has {missing_addresses_account.cex_address}\n"
+
+        # Raise an exception with the missing addresses
+        raise Exception(f"There are incorrect cex addresses in configuration: {error_log}")
 
 
 class AppAccount(Account):
