@@ -26,6 +26,5 @@ def decrypt_private_key(encrypted_private_key, password):
     return decrypted_private_key.decode()
 
 
-def decrypt_okx_api(encrypted_private_key, password):
-    return Fernet(generate_key(password)).decrypt(encrypted_private_key).decode('utf-8')
-
+def decrypt_cex_data(encrypted_private_key, password):
+    return Fernet(generate_key(password)).decrypt(encrypted_private_key).decode('utf-8').split(',')
