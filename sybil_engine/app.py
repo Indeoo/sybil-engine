@@ -31,6 +31,9 @@ def prepare_launch_without_data(modules_data_file):
     if 'account_creation_mode' not in config_map:
         config_map['account_creation_mode'] = 'TXT'
 
+    if 'cex_address_validation' not in config_map:
+        config_map['cex_address_validation'] = True
+
     if 'interactive_confirmation' not in config_map:
         config_map['interactive_confirmation'] = True
 
@@ -63,6 +66,7 @@ def prepare_launch_without_data(modules_data_file):
         module_map['swap_retry_sleep_interval'],
         config_map['gas_prices'],
         config_map['account_creation_mode'],
+        config_map['cex_address_validation'],
         config_map['interactive_confirmation']
     )
 
@@ -78,7 +82,7 @@ def get_module_name(module):
 
 def launch_app(args, module_config, config):
     (modules_data, encryption, min_native_interval, proxy_mode, cex_data, sleep_interval, swap_retry_sleep_interval,
-     gas_price, account_creation_mode, interactive_confirmation) = config
+     gas_price, account_creation_mode, cex_address_validation, interactive_confirmation) = config
 
     set_network(args.network)
     set_dex_retry_interval(swap_retry_sleep_interval)
@@ -94,7 +98,7 @@ def launch_app(args, module_config, config):
     if not all(modules_data.get_module_class_by_name(module['module']) for module in module_config['scenario']):
         raise ConfigurationException("Non-existing module is used")
 
-    accounts = create_app_account(args, encryption, proxy_mode, account_creation_mode)
+    accounts = create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_address_validation)
 
     execution_plans = create_execution_plans(accounts, min_native_interval, module_config, modules_data)
 

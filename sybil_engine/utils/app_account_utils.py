@@ -13,7 +13,7 @@ from sybil_engine.utils.utils import ConfigurationException
 from sybil_engine.utils.wallet_loader import load_addresses
 
 
-def create_app_account(args, encryption, proxy_mode, account_creation_mode):
+def create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_address_validation):
     if account_creation_mode == 'TXT' or account_creation_mode is None:
         accounts = create_app_accounts_from_txt(
             args.private_keys,
@@ -28,7 +28,8 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode):
     else:
         raise ConfigurationException("account_creation_mode should be CSV or TXT")
 
-    validate_cex_addresses(accounts, get_cex_addresses())
+    if cex_address_validation:
+        validate_cex_addresses(accounts, get_cex_addresses())
 
     return accounts
 
@@ -162,12 +163,14 @@ def validate_cex_addresses(app_accounts, cex_addresses):
 
     # If there are any missing addresses, log them and raise an exception
     if missing_addresses_accounts:
+        error_log = f"There are incorrect cex addresses in configuration:"
+
         for missing_addresses_account in missing_addresses_accounts:
             # Log the missing addresses. Adjust logging based on your environment or logging setup
-            error_log = f"Account {missing_addresses_account} has {missing_addresses_account.cex_address}\n"
+            error_log += f"{missing_addresses_account} has wrong CEX {missing_addresses_account.cex_address}. "
 
         # Raise an exception with the missing addresses
-        raise Exception(f"There are incorrect cex addresses in configuration: {error_log}")
+        raise Exception({error_log})
 
 
 class AppAccount(Account):
