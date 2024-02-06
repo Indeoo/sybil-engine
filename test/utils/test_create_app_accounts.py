@@ -1,7 +1,9 @@
 import unittest
 
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
-from sybil_engine.utils.app_account_utils import create_app_account_with_proxies, create_app_accounts_from_csv
+from sybil_engine.utils.app_account_utils import create_app_account_with_proxies, create_app_accounts_from_csv, \
+    validate_cex_addresses, AppAccount
+from test import zksync_test_account
 
 
 class TestCreateAppAccounts(unittest.TestCase):
@@ -44,3 +46,22 @@ class TestCreateAppAccounts(unittest.TestCase):
             2
         )
         print(accounts)
+
+    def test_validate_cex_addresses(self):
+        app_accounts = [
+            AppAccount(1, None, zksync_test_account, '1', None),
+            AppAccount(2, None, zksync_test_account, '2', None)
+        ]
+        cex_addresses = ['1', '2']
+
+        validate_cex_addresses(app_accounts, cex_addresses)
+
+    def test_validate_cex_addresses_fail(self):
+        app_accounts = [
+            AppAccount(1, None, zksync_test_account, '1', None),
+            AppAccount(2, None, zksync_test_account, '2', None)
+        ]
+        cex_addresses = ['1', '3']
+
+        with self.assertRaises(Exception):
+            validate_cex_addresses(app_accounts, cex_addresses)
