@@ -1,6 +1,8 @@
+from binance.error import ClientError
 from binance.spot import Spot
 
 from sybil_engine.utils.decryptor import decrypt_cex_data
+from sybil_engine.utils.utils import ConfigurationException
 
 
 def get_sub_accounts(apiKey, secretKey):
@@ -46,12 +48,14 @@ def binance_transfer_from_sub_acc(password, binance_secret):
         transfer_sub_accounts(apiKey, secretKey, sub_account, assets)
 
 
-def binance_withdrawal(binance_secret, password, amount, token, address):
+def binance_withdrawal(binance_secret, password, token, amount, address, chain):
     apiKey, secretKey = decrypt_cex_data(binance_secret, password)
 
     client = Spot(api_key=apiKey, api_secret=secretKey)
-
-    client.withdraw(token, amount, address)
+    try:
+        client.withdraw(token, amount, address, network=chain)
+    except ClientError as e:
+        raise ConfigurationException(e.error_message)
 
 
 def get_binance_deposit_addresses(password, cex_data):

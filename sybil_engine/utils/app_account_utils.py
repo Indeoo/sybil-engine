@@ -151,25 +151,18 @@ def create_app_account_with_proxies(cex_addresses, encryption, password, private
     return app_accounts
 
 def validate_cex_addresses(app_accounts, cex_addresses):
-    # Initialize an empty list to hold any cex_addresses not found in the cex_addresses list
     missing_addresses_accounts = []
 
-    # Loop through each account in app_accounts
     for account in app_accounts:
-        # Check if the cex_address of the current account is not in cex_addresses
         if account.cex_address not in cex_addresses:
-            # If not found, add it to the list of missing_addresses_accounts
             missing_addresses_accounts.append(account)
 
-    # If there are any missing addresses, log them and raise an exception
     if missing_addresses_accounts:
         error_log = f"There are incorrect cex addresses in configuration:"
 
         for missing_addresses_account in missing_addresses_accounts:
-            # Log the missing addresses. Adjust logging based on your environment or logging setup
             error_log += f"{missing_addresses_account} has wrong CEX {missing_addresses_account.cex_address}. "
 
-        # Raise an exception with the missing addresses
         raise Exception({error_log})
 
 
