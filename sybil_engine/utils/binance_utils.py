@@ -5,6 +5,14 @@ from sybil_engine.utils.decryptor import decrypt_cex_data
 from sybil_engine.utils.utils import ConfigurationException
 
 
+networks = {
+    'ZKSYNC': 'ZKSYNCERA',
+    'BASE': 'BASE',
+    'ARBITRUM': 'ARBITRUM',
+    'OPTIMISM': 'OPTIMISM',
+}
+
+
 def get_sub_accounts(apiKey, secretKey):
     client = Spot(api_key=apiKey, api_secret=secretKey)
 
@@ -53,7 +61,7 @@ def binance_withdrawal(binance_secret, password, token, amount, address, chain):
 
     client = Spot(api_key=apiKey, api_secret=secretKey)
     try:
-        client.withdraw(token, amount, address, network=chain)
+        client.withdraw(token, amount, address, network=networks[chain])
     except ClientError as e:
         raise ConfigurationException(e.error_message)
 
