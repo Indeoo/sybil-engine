@@ -35,8 +35,9 @@ def add_accumulator_str(key: str, value: str):
 
 
 def remove_accumulator_str(key: str, value):
-    accumulator_arr = accumulator[key]
-    accumulator_arr.remove(value)
+    if key in accumulator:
+        accumulator_arr = accumulator[key]
+        accumulator_arr.remove(value)
 
 
 def get_value(key: str):
