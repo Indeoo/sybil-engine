@@ -24,7 +24,7 @@ class TestModuleExecutor(unittest.TestCase):
 
         ModuleExecutor().execute_modules(modules, account, sleep_interval)
 
-        self.assertEqual(get_value("Failed accounts: "), None)
+        self.assertEqual(get_value("Finished accounts: "), [zksync_test_account])
 
     def test_shouldThrowNotEnoughNativeBalance(self):
         sleep_interval = {'from': 0, 'to': 0}
