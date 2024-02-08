@@ -34,6 +34,11 @@ def add_accumulator_str(key: str, value: str):
     accumulator[key].append(value)
 
 
+def remove_accumulator_str(key: str, value):
+    accumulator_arr = accumulator[key]
+    accumulator_arr.remove(value)
+
+
 def get_value(key: str):
     return accumulator.get(key)
 
