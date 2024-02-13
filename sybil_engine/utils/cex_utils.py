@@ -6,4 +6,4 @@ from sybil_engine.utils.okx_utils import get_okx_deposit_addresses
 def get_cex_addresses():
     password, cex_data = get_cex_data()
 
-    return get_okx_deposit_addresses(password, cex_data['okx']) + get_binance_deposit_addresses(password, cex_data['binance'])
+    return get_okx_deposit_addresses(password, cex_data['okx']) #+ get_binance_deposit_addresses(password, cex_data['binance'])
