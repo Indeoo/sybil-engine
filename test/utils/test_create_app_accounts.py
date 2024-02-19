@@ -15,8 +15,7 @@ class TestCreateAppAccounts(unittest.TestCase):
             'password',
             ['0x7726827caac94a7f9e1b160f7ea819f172f7b6f9d2a97f992c38edeab82d4110'],
             [],
-            'RANDOM',
-            ['0x6317842385f344acf68561f4e65f0f39e4fb4f1ad104b92bd007361aed39d8'],
+            'RANDOM'
         )[0]
 
         zksync_min_native_balance = interval_to_eth_balance({'from': 1, 'to': 1}, zksync_test_account, None, None)
@@ -28,8 +27,7 @@ class TestCreateAppAccounts(unittest.TestCase):
             'password',
             ['0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'],
             [],
-            'RANDOM',
-            ['0x6317842385f344acf68561f4e65f0f39e4fb4f1ad104b92bd007361aed39d8'],
+            'RANDOM'
         )[0]
 
         base_min_native_balance = interval_to_eth_balance({'from': 1, 'to': 1}, base_test_account, None, None)
@@ -49,8 +47,8 @@ class TestCreateAppAccounts(unittest.TestCase):
 
     def test_validate_cex_addresses(self):
         app_accounts = [
-            AppAccount(1, None, zksync_test_account, '1', None),
-            AppAccount(2, None, zksync_test_account, '2', None)
+            AppAccount(1, None, zksync_test_account, '1'),
+            AppAccount(2, None, zksync_test_account, '2')
         ]
         cex_addresses = ['1', '2']
 
@@ -58,8 +56,8 @@ class TestCreateAppAccounts(unittest.TestCase):
 
     def test_validate_cex_addresses_fail(self):
         app_accounts = [
-            AppAccount(1, None, zksync_test_account, '1', None),
-            AppAccount(2, None, zksync_test_account, '2', None)
+            AppAccount(1, None, zksync_test_account, '1'),
+            AppAccount(2, None, zksync_test_account, '2')
         ]
         cex_addresses = ['1', '3']
 

@@ -62,26 +62,6 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
     return tx_hash
 
 
-def evm_starknet_transaction(func):
-    @wraps(func)
-    def wrapper(instance, account, *args):
-        chain_instance = instance.chain_instance
-        web3 = instance.web3
-        args = instance, account, *args
-
-        return execute_starknet_bridge_transaction_internal(func, args, chain_instance, account, web3)
-
-    return wrapper
-
-
-def execute_starknet_bridge_transaction_internal(account, args, chain_instance, func, web3):
-    tx_hash = execute_transaction_internal(func, args, chain_instance, account, web3)
-
-    logger.info(f'>>> https://starkscan.co/contract/{account.starknet_address}#token-transfers')
-
-    return tx_hash
-
-
 def l0_evm_transaction(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
