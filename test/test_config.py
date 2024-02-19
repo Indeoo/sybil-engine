@@ -7,7 +7,6 @@ cdir = os.getcwd()
 proxy_file = f'{cdir}/tests/proxy.txt'
 args = argparse.Namespace(password='test', private_keys=f'{cdir}/tests/private_keys.txt',
                           cex_addresses=f'{cdir}/tests/cex_addresses.txt',
-                          starknet_addresses=f'{cdir}/tests/starknet_addresses.txt',
                           proxy_file=f'{cdir}/tests/proxy.txt',
                           network='LOCAL')
 

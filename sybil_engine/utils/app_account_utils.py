@@ -19,7 +19,6 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_
             args.private_keys,
             (proxy_mode, args.proxy_file),
             args.cex_addresses,
-            args.starknet_addresses,
             args.password.encode('utf-8'),
             encryption
         )
@@ -34,7 +33,7 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_
     return accounts
 
 
-def create_app_accounts_from_txt(private_keys, proxy_config, cex_addresses, starknet_addresses, password, encryption):
+def create_app_accounts_from_txt(private_keys, proxy_config, cex_addresses, password, encryption):
     proxy_mode, proxy_file = proxy_config
 
     return create_app_account_with_proxies(
@@ -43,8 +42,7 @@ def create_app_accounts_from_txt(private_keys, proxy_config, cex_addresses, star
         password,
         load_addresses(private_keys),
         load_file_rows(proxy_file),
-        proxy_mode,
-        load_addresses(starknet_addresses)
+        proxy_mode
     )
 
 
@@ -52,23 +50,17 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
     rows = read_csv_rows(account_csv)
     app_accounts = []
 
-    starknet = False
-    cex = False
+    cex_flag = False
 
     for row in rows:
         if row['ENABLE'] == 'FALSE':
             continue
 
         if row['CEX_ADDRESS'] != '':
-            starknet = True
-        if row['STARKNET_ADDRESS'] != '':
-            cex = True
+            cex_flag = True
 
-        if starknet and row['CEX_ADDRESS'] == '':
-            raise ConfigurationException("Starknet addresses not should be less than accounts")
-
-        if cex and row['STARKNET_ADDRESS'] == '':
-            raise ConfigurationException("Cex addresses not should be less than accounts")
+        if cex_flag and row['CEX_ADDRESS'] == '':
+            raise ConfigurationException("CEX addresses not should be less than accounts")
 
         if encryption:
             private_key = decrypt_private_key(row['PRIVATE_KEY'], password)
@@ -90,8 +82,7 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
                 row['ADS_ID'],
                 proxy,
                 account,
-                row['CEX_ADDRESS'],
-                row['STARKNET_ADDRESS']
+                row['CEX_ADDRESS']
             )
         )
 
@@ -101,23 +92,19 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
     return app_accounts
 
 
-def create_app_account_with_proxies(cex_addresses, encryption, password, private_keys, proxies, proxy_mode,
-                                    starknet_addresses):
+def create_app_account_with_proxies(cex_addresses, encryption, password, private_keys, proxies, proxy_mode):
     if len(cex_addresses) > 0:
         if len(cex_addresses) != len(private_keys):
             raise Exception("Cex addresses should not be less than accounts")
-    if len(starknet_addresses) > 0:
-        if len(starknet_addresses) != len(private_keys):
-            raise Exception("Starknet addresses not should be less than accounts")
 
     if len(private_keys) < len(proxies):
         raise ConfigurationException('There should be less or equals amount of proxies to private keys')
 
-    accs_tulpe = list(zip_longest(private_keys, cex_addresses, proxies, starknet_addresses))
+    accs_tulpe = list(zip_longest(private_keys, cex_addresses, proxies))
     app_accounts = []
     seen_private_keys = set()
 
-    for index, (private_key, cex_address, proxy, starknet_address) in enumerate(accs_tulpe, start=1):
+    for index, (private_key, cex_address, proxy) in enumerate(accs_tulpe, start=1):
         if private_key.startswith(('#',)):
             continue
         else:
@@ -143,7 +130,7 @@ def create_app_account_with_proxies(cex_addresses, encryption, password, private
             for i in range(len(app_accounts)):
                 proxy = None
 
-        app_accounts = app_accounts + [AppAccount(index, proxy, account, cex_address, starknet_address)]
+        app_accounts = app_accounts + [AppAccount(index, proxy, account, cex_address)]
 
     logger.info(f"Loaded {len(app_accounts)} accounts")
     random.shuffle(app_accounts)
@@ -167,13 +154,12 @@ def validate_cex_addresses(app_accounts, cex_addresses):
 
 
 class AppAccount(Account):
-    def __init__(self, app_id, proxy, account, cex_address, starknet_address):
+    def __init__(self, app_id, proxy, account, cex_address):
         self.app_id = app_id
         self.proxy = proxy
         self.address = account.address
         self.key = account.key
         self.cex_address = cex_address
-        self.starknet_address = starknet_address
 
     def __repr__(self):
         return f"[{repr(self.app_id)}] {self.address}"
