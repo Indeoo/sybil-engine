@@ -45,7 +45,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
         randomized_sleeping(chain_instance['transaction_sleep_interval'])
         web3.eth.wait_for_transaction_receipt(tx_hash)
 
-        logger.info(f">>> {chain_instance['scan']}/{Web3.to_hex(tx_hash)}")
+        logger.info(f">>> {chain_instance['scan']}/tx/{Web3.to_hex(tx_hash)}")
         tx_receipt = web3.eth.get_transaction_receipt(tx_hash)
 
         transaction_status = tx_receipt['status']
