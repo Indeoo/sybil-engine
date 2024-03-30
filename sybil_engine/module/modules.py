@@ -1,5 +1,5 @@
 from sybil_engine.config.app_config import get_network
-from sybil_engine.data.networks import get_rpcs
+from sybil_engine.data.networks import get_networks
 
 
 class Modules:
@@ -34,4 +34,4 @@ class Modules:
         return self.swap_facade.get_swap_apps()
 
     def get_supported_chains(self):
-        return list(get_rpcs(get_network()).copy().keys())
+        return list(get_networks(get_network()).copy().keys())
