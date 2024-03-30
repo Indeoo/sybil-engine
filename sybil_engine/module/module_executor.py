@@ -5,7 +5,8 @@ from sybil_engine.data.networks import get_chain_instance
 
 from sybil_engine.utils.accumulator import add_accumulator_str, remove_accumulator_str
 from sybil_engine.utils.scal_utils import find_interacted_contracts
-from sybil_engine.utils.utils import randomized_sleeping, ModuleException, print_exception_chain, ConfigurationException
+from sybil_engine.utils.utils import randomized_sleeping, ModuleException, print_exception_chain, \
+    ConfigurationException, RetryException
 
 
 class ModuleExecutor:
@@ -51,5 +52,7 @@ class ModuleExecutor:
                     randomized_sleeping(sleep_interval)
             except Exception as e:
                 module.handle(e)
+        except RetryException as e:
+            self.execute_module(module_args, account, module, sleep_interval)
         except ModuleException as e:
             print_exception_chain(e)
