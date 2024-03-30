@@ -50,6 +50,6 @@ class ModuleExecutor:
                 if module.sleep_after():
                     randomized_sleeping(sleep_interval)
             except Exception as e:
-                    module.handle(e)
+                module.handle(e)
         except ModuleException as e:
             print_exception_chain(e)
