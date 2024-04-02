@@ -18,7 +18,7 @@ class Contract:
         }
 
         if not self.chain_instance['eip1599']:
-            txn_data['gasPrice'] = self.web3.eth.gas_price
+            txn_data['gasPrice'] = int(self.web3.eth.gas_price * 1.2)
 
         if set_contract_address:
             txn_data['to'] = self.contract_address
