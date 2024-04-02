@@ -5,7 +5,7 @@ with open("requirements.txt", "r", encoding="utf-8") as file:
 
 setup(
     name='sybil_engine',
-    version='6.5.1',
+    version='6.5.2',
     py_modules=['sybil_engine'],
     packages=find_packages(),
     install_requires=requirements,
