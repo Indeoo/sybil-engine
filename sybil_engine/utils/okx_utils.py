@@ -2,7 +2,7 @@ import ccxt
 from loguru import logger
 from okx import Funding, SubAccount
 
-from sybil_engine.utils.decryptor import decrypt_cex_data
+from sybil_engine.utils.decryptor import read_cex_data
 
 networks = {
     'ZKSYNC': 'zkSync Era',
@@ -42,7 +42,7 @@ def get_withdrawal_fee(api_key, secret_key, passphrase, symbol_withdraw, chain_n
 
 
 def withdrawal(addr, password, chain, cex_data, withdraw_amount, token='ETH'):
-    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
+    api_key, secret_key, passphrase = read_cex_data(cex_data, password)
     flag = "0"
 
     if chain == 'POLYGON' and token == 'USDC':
@@ -60,7 +60,7 @@ def withdrawal(addr, password, chain, cex_data, withdraw_amount, token='ETH'):
 
 
 def get_sub_accounts(cex_data, password):
-    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
+    api_key, secret_key, passphrase = read_cex_data(cex_data, password)
 
     flag = "0"  # Production trading: 0, Demo trading: 1
 
@@ -71,7 +71,7 @@ def get_sub_accounts(cex_data, password):
 
 
 def get_sub_account_balance(acc_name, token, cex_data, password):
-    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
+    api_key, secret_key, passphrase = read_cex_data(cex_data, password)
 
     flag = "0"
 
@@ -81,7 +81,7 @@ def get_sub_account_balance(acc_name, token, cex_data, password):
 
 
 def transfer_from_sub_acc(acc_name, amount, token, cex_data, password):
-    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
+    api_key, secret_key, passphrase = read_cex_data(cex_data, password)
 
     flag = "0"
 
@@ -105,7 +105,7 @@ def okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token):
 
 
 def get_okx_deposit_addresses(password, cex_data):
-    api_key, secret_key, passphrase = decrypt_cex_data(cex_data, password)
+    api_key, secret_key, passphrase = read_cex_data(cex_data, password)
 
     flag = "0"
 

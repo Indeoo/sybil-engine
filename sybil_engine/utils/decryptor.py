@@ -4,6 +4,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from loguru import logger
 
 
 def generate_key(password):
@@ -26,5 +27,9 @@ def decrypt_private_key(encrypted_private_key, password):
     return decrypted_private_key.decode()
 
 
-def decrypt_cex_data(encrypted_private_key, password):
-    return Fernet(generate_key(password)).decrypt(encrypted_private_key).decode('utf-8').split(',')
+def read_cex_data(cex_data, password):
+    try:
+        return Fernet(generate_key(password)).decrypt(cex_data).decode('utf-8').split(',')
+    except Exception as e:
+        logger.warning("Can't read encrypted CEX data, trying to read unencrypted")
+        return cex_data

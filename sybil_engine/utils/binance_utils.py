@@ -1,7 +1,7 @@
 from binance.error import ClientError
 from binance.spot import Spot
 
-from sybil_engine.utils.decryptor import decrypt_cex_data
+from sybil_engine.utils.decryptor import read_cex_data
 from sybil_engine.utils.utils import ConfigurationException
 
 
@@ -49,7 +49,7 @@ def get_sub_account_balance(apiKey, secretKey, sub_account):
 
 
 def binance_transfer_from_sub_acc(password, binance_secret):
-    apiKey, secretKey = decrypt_cex_data(binance_secret, password)
+    apiKey, secretKey = read_cex_data(binance_secret, password)
 
     for sub_account in get_sub_accounts(apiKey, secretKey):
         assets = get_sub_account_balance(apiKey, secretKey, sub_account)
@@ -57,7 +57,7 @@ def binance_transfer_from_sub_acc(password, binance_secret):
 
 
 def binance_withdrawal(binance_secret, password, token, amount, address, chain):
-    apiKey, secretKey = decrypt_cex_data(binance_secret, password)
+    apiKey, secretKey = read_cex_data(binance_secret, password)
 
     client = Spot(api_key=apiKey, api_secret=secretKey)
     try:
@@ -67,7 +67,7 @@ def binance_withdrawal(binance_secret, password, token, amount, address, chain):
 
 
 def get_binance_deposit_addresses(password, cex_data):
-    apiKey, secretKey = decrypt_cex_data(cex_data, password)
+    apiKey, secretKey = read_cex_data(cex_data, password)
 
     client = Spot(api_key=apiKey, api_secret=secretKey)
 
