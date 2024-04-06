@@ -1,6 +1,7 @@
 import ccxt
 from loguru import logger
 from okx import Funding, SubAccount
+from sybil_engine.utils.utils import randomized_sleeping
 
 from sybil_engine.utils.decryptor import read_cex_data
 
@@ -94,6 +95,7 @@ def okx_transfer_from_sub_account(okx_secret, cex_data, tokens=['ETH']):
     for acc in get_sub_accounts(cex_data, okx_secret)['data']:
         for token in tokens:
             okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token)
+            randomized_sleeping({'from': 1, 'to': 1})
 
 
 def okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token):
