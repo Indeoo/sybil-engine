@@ -85,13 +85,19 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
         else:
             proxy = row['PROXY']
 
+        if 'NOTES' in row:
+            notes = row['NOTES']
+        else:
+            notes = None
+
         app_accounts.append(
             AppAccount(
                 row['ADS_ID'],
                 proxy,
                 account,
                 row['CEX_ADDRESS'],
-                row['STARKNET_ADDRESS']
+                row['STARKNET_ADDRESS'],
+                row['NOTES']
             )
         )
 
@@ -167,13 +173,14 @@ def validate_cex_addresses(app_accounts, cex_addresses):
 
 
 class AppAccount(Account):
-    def __init__(self, app_id, proxy, account, cex_address, starknet_address):
+    def __init__(self, app_id, proxy, account, cex_address, starknet_address, notes):
         self.app_id = app_id
         self.proxy = proxy
         self.address = account.address
         self.key = account.key
         self.cex_address = cex_address
         self.starknet_address = starknet_address
+        self.notes = notes
 
     def __repr__(self):
         return f"[{repr(self.app_id)}] {self.address}"

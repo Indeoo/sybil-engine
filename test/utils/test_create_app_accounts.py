@@ -49,8 +49,8 @@ class TestCreateAppAccounts(unittest.TestCase):
 
     def test_validate_cex_addresses(self):
         app_accounts = [
-            AppAccount(1, None, zksync_test_account, '1', None),
-            AppAccount(2, None, zksync_test_account, '2', None)
+            AppAccount(1, None, zksync_test_account, '1', None, None),
+            AppAccount(2, None, zksync_test_account, '2', None, None)
         ]
         cex_addresses = ['1', '2']
 
@@ -58,8 +58,8 @@ class TestCreateAppAccounts(unittest.TestCase):
 
     def test_validate_cex_addresses_fail(self):
         app_accounts = [
-            AppAccount(1, None, zksync_test_account, '1', None),
-            AppAccount(2, None, zksync_test_account, '2', None)
+            AppAccount(1, None, zksync_test_account, '1', None, None),
+            AppAccount(2, None, zksync_test_account, '2', None, None)
         ]
         cex_addresses = ['1', '3']
 
