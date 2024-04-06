@@ -97,7 +97,7 @@ def create_app_accounts_from_csv(account_csv, password, encryption):
                 account,
                 row['CEX_ADDRESS'],
                 row['STARKNET_ADDRESS'],
-                row['NOTES']
+                notes
             )
         )
 
