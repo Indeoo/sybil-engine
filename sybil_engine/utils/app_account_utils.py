@@ -29,7 +29,7 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_
         raise ConfigurationException("account_creation_mode should be CSV or TXT")
 
     if cex_address_validation:
-        validate_cex_addresses(accounts, get_cex_addresses())
+        validate_cex_addresses(accounts, get_cex_addresses(args.cex_conf))
 
     return accounts
 
