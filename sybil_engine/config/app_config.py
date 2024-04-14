@@ -3,6 +3,7 @@ dex_retry_interval = None
 gas_prices_gwei = None
 module_data = None
 cex_data = None, None, None
+cex_conf = None
 
 
 def set_network(value):
@@ -48,3 +49,12 @@ def set_cex_data(value):
 
 def get_cex_data():
     return cex_data
+
+
+def set_cex_conf(value):
+    global cex_conf
+    cex_conf = value
+
+
+def get_cex_conf():
+    return cex_conf

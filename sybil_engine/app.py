@@ -1,7 +1,7 @@
 from loguru import logger
 
 from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data, \
-    set_cex_data
+    set_cex_data, set_cex_conf
 from sybil_engine.module.execution_planner import create_execution_plans
 from sybil_engine.module.module_executor import ModuleExecutor
 from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str
@@ -89,6 +89,7 @@ def launch_app(args, module_config, config):
     set_gas_prices(gas_price)
     set_module_data(modules_data)
     set_cex_data((args.password.encode('utf-8'), cex_data))
+    set_cex_conf(args.cex_conf)
 
     logger.info(f"START {module_config['scenario_name']} module in {args.network}")
 
