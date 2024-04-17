@@ -10,7 +10,7 @@ def get_google_spreadsheet(spreadsheet_id, sheet_name):
     # Define the scope
     SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
     # Path to your service account key file
-    SERVICE_ACCOUNT_FILE = 'service-accounts.json'
+    SERVICE_ACCOUNT_FILE = 'data/service-accounts.json'
     # Spreadsheet details
     # Authenticate and construct service
     credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
