@@ -23,8 +23,6 @@ def prepare_launch_without_data(modules_data_file):
     set_telegram_api_chat_id(config_map['telegram_api_chat_id'])
     set_telegram_api_key(config_map['telegram_api_key'])
 
-    args = parse_arguments(config_map['password'], module_map['module'])
-
     if 'shell_mode' not in config_map:
         config_map['shell_mode'] = 'classic'
 
@@ -36,6 +34,10 @@ def prepare_launch_without_data(modules_data_file):
 
     if 'interactive_confirmation' not in config_map:
         config_map['interactive_confirmation'] = True
+    if 'spreadsheet_id' not in config_map:
+        config_map['spreadsheet_id'] = None
+
+    args = parse_arguments(config_map['password'], config_map['spreadsheet_id'], module_map['module'])
 
     if config_map['shell_mode'] == 'interactive':
         logger.info("Choose module (by id):")
