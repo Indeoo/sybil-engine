@@ -9,6 +9,7 @@ from sybil_engine.utils.cex_utils import get_cex_addresses
 from sybil_engine.utils.csv_reader import read_csv_rows
 from sybil_engine.utils.decryptor import decrypt_private_key
 from sybil_engine.utils.file_loader import load_file_rows
+from sybil_engine.utils.google_utils import get_google_spreadsheet
 from sybil_engine.utils.utils import ConfigurationException
 from sybil_engine.utils.wallet_loader import load_addresses
 
@@ -24,9 +25,18 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_
             encryption
         )
     elif account_creation_mode == 'CSV':
-        accounts = create_app_accounts_from_csv(args.account_csv, args.password.encode('utf-8'), encryption)
+        rows = read_csv_rows(args.account_csv)
+
+        accounts = create_app_accounts_from_table(rows, args.password.encode('utf-8'), encryption)
+    elif account_creation_mode == 'GOOGLE':
+        if args.spreadsheet_id is None:
+            raise Exception(f"account_creation_mode is GOOGLE, spreadsheet_id is required in config")
+
+        rows = get_google_spreadsheet(args.spreadsheet_id, args.wallets)
+
+        accounts = create_app_accounts_from_table(rows, args.password.encode('utf-8'), encryption)
     else:
-        raise ConfigurationException("account_creation_mode should be CSV or TXT")
+        raise ConfigurationException("account_creation_mode should be TXT, CSV or GOOGLE")
 
     if cex_address_validation:
         validate_cex_addresses(accounts, get_cex_addresses(args.cex_conf))
@@ -48,8 +58,7 @@ def create_app_accounts_from_txt(private_keys, proxy_config, cex_addresses, star
     )
 
 
-def create_app_accounts_from_csv(account_csv, password, encryption):
-    rows = read_csv_rows(account_csv)
+def create_app_accounts_from_table(rows, password, encryption):
     app_accounts = []
 
     starknet = False

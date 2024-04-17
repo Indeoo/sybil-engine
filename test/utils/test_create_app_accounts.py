@@ -1,7 +1,7 @@
 import unittest
 
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
-from sybil_engine.utils.app_account_utils import create_app_account_with_proxies, create_app_accounts_from_csv, \
+from sybil_engine.utils.app_account_utils import create_app_account_with_proxies, create_app_accounts_from_table, \
     validate_cex_addresses, AppAccount
 from test import zksync_test_account
 
@@ -35,7 +35,7 @@ class TestCreateAppAccounts(unittest.TestCase):
         base_min_native_balance = interval_to_eth_balance({'from': 1, 'to': 1}, base_test_account, None, None)
 
     def test_create_zksync_from_csv(self):
-        accounts = create_app_accounts_from_csv(
+        accounts = create_app_accounts_from_table(
             'test/data/wallets/accounts.csv',
             'password',
             False

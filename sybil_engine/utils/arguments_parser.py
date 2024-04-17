@@ -3,7 +3,7 @@ import os
 import sys
 
 
-def parse_arguments(default_password, default_module):
+def parse_arguments(default_password, spreadsheet_id, default_module):
     parser = argparse.ArgumentParser(description='Process arguments.')
 
     data_folder = 'data'
@@ -37,6 +37,9 @@ def parse_arguments(default_password, default_module):
     parser.add_argument('--module', type=str, required=False, default=os.environ.get('MODULE', default_module),
                         help='a string to be processed')
     parser.add_argument('--cex_conf', type=str, required=False, default=os.environ.get('CEX_CONF', 'okx'),
+                        help='a string to be processed')
+    parser.add_argument('--spreadsheet_id', type=str, required=False,
+                        default=os.environ.get('SPREADSHEET_ID', spreadsheet_id),
                         help='a string to be processed')
 
     args = parser.parse_args()
