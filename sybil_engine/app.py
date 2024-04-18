@@ -30,7 +30,7 @@ def prepare_launch_without_data(modules_data_file):
         config_map['account_creation_mode'] = 'TXT'
 
     if 'cex_address_validation' not in config_map:
-        config_map['cex_address_validation'] = True
+        config_map['cex_address_validation'] = False
 
     if 'interactive_confirmation' not in config_map:
         config_map['interactive_confirmation'] = True
