@@ -11,8 +11,8 @@ class TestValidation(unittest.TestCase):
         set_module_data(test_modules)
 
         try:
-            validate_chain('ZKSYNC')
-            validate_chain('OPTIMISM')
+            #validate_chain('ZKSYNC')
+            validate_chain('MOCK_CHAIN')
         except Exception as e:
             self.fail(e)
 

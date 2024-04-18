@@ -1,15 +1,17 @@
 import unittest
 
+from sybil_engine.utils.csv_reader import read_csv_rows
+
 from sybil_engine.domain.balance.balance_utils import interval_to_eth_balance
 from sybil_engine.utils.app_account_utils import create_app_account_with_proxies, create_app_accounts_from_table, \
     validate_cex_addresses, AppAccount
-from test import zksync_test_account
+from test import test_account
 
 
 class TestCreateAppAccounts(unittest.TestCase):
 
     def test_create_zksync(self):
-        zksync_test_account = create_app_account_with_proxies(
+        test_account = create_app_account_with_proxies(
             ['0xb98308D11E2B578858Fbe65b793e71C7a0CAa43e'],
             False,
             'password',
@@ -19,7 +21,7 @@ class TestCreateAppAccounts(unittest.TestCase):
             ['0x6317842385f344acf68561f4e65f0f39e4fb4f1ad104b92bd007361aed39d8'],
         )[0]
 
-        zksync_min_native_balance = interval_to_eth_balance({'from': 1, 'to': 1}, zksync_test_account, None, None)
+        zksync_min_native_balance = interval_to_eth_balance({'from': 1, 'to': 1}, test_account, None, None)
 
     def test_create_base_account(self):
         base_test_account = create_app_account_with_proxies(
@@ -35,8 +37,10 @@ class TestCreateAppAccounts(unittest.TestCase):
         base_min_native_balance = interval_to_eth_balance({'from': 1, 'to': 1}, base_test_account, None, None)
 
     def test_create_zksync_from_csv(self):
+        rows = read_csv_rows('test/data/wallets/accounts.csv')
+
         accounts = create_app_accounts_from_table(
-            'test/data/wallets/accounts.csv',
+            rows,
             'password',
             False
         )
@@ -49,8 +53,8 @@ class TestCreateAppAccounts(unittest.TestCase):
 
     def test_validate_cex_addresses(self):
         app_accounts = [
-            AppAccount(1, None, zksync_test_account, '1', None, None),
-            AppAccount(2, None, zksync_test_account, '2', None, None)
+            AppAccount(1, None, test_account, '1', None, None),
+            AppAccount(2, None, test_account, '2', None, None)
         ]
         cex_addresses = ['1', '2']
 
@@ -58,8 +62,8 @@ class TestCreateAppAccounts(unittest.TestCase):
 
     def test_validate_cex_addresses_fail(self):
         app_accounts = [
-            AppAccount(1, None, zksync_test_account, '1', None, None),
-            AppAccount(2, None, zksync_test_account, '2', None, None)
+            AppAccount(1, None, test_account, '1', None, None),
+            AppAccount(2, None, test_account, '2', None, None)
         ]
         cex_addresses = ['1', '3']
 
