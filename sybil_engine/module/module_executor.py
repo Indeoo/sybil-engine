@@ -4,7 +4,7 @@ from sybil_engine.data.contracts import get_contracts_for_chain
 from sybil_engine.data.networks import get_chain_instance
 
 from sybil_engine.utils.accumulator import add_accumulator_str, remove_accumulator_str
-from sybil_engine.utils.scal_utils import find_interacted_contracts
+from sybil_engine.utils.scan_utils import find_interacted_contracts
 from sybil_engine.utils.utils import randomized_sleeping, ModuleException, print_exception_chain, \
     ConfigurationException, RetryException
 
@@ -26,12 +26,14 @@ class ModuleExecutor:
     def execute_module(self, module_args, account, module, sleep_interval):
         try:
             args = list(module_args.keys())
-            if 'unique' in args and 'chain' in args and 'api_key' in args and module_args['unique']:
+            if 'unique' in args and 'chain' in args and module_args['unique']:
                 chain = module_args['chain']
+                chain_instance = get_chain_instance(chain)
+
                 interactions = find_interacted_contracts(
                     account.address,
-                    get_chain_instance(chain)['scan_api'],
-                    module_args['api_key']
+                    chain_instance['api_scan'],
+                    chain_instance['api_scan_key']
                 )
 
                 if 'contract' in args:

@@ -6,6 +6,7 @@
     "poa": false,
     "eip1599": false,
     "scan": "http://mockscan/tx/",
+    "api_scan_key": "api_key",
     "transaction_sleep_interval": {
       "from": 0,
       "to": 0
