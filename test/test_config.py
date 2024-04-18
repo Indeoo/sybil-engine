@@ -1,6 +1,11 @@
 import argparse
 import os
 
+from eth_tester import EthereumTester, PyEVMBackend
+from eth_utils import to_wei
+from web3 import EthereumTesterProvider
+
+from test import test_account
 from test.module.test_modules import test_modules
 
 cdir = os.getcwd()
@@ -35,15 +40,7 @@ def create_config():
     # Gwei Price Limits
     gas_prices = {
         'ETH_MAINNET': 25,
-        'ZKSYNC': 0.26,
-        'BASE': 0.5,
-        'LINEA': 2,
-        'ARBITRUM': 0.2,
-        'AVALANCHE': 26,
-        'BSC': 5,
-        'FANTOM': 750,
-        'OPTIMISM': 0.5,
-        'POLYGON': 150
+        'MOCK_CHAIN': 0.26,
     }
 
     # CEX configuration !!!CURRENTLY ONLY FOR ZKSYNC!!!
@@ -56,3 +53,21 @@ def create_config():
     okx_config = (cex_data, auto_withdrawal, withdraw_interval)
 
     return test_modules, encryption, min_native_interval, proxy_mode, okx_config, sleep_interval, swap_retry_sleep_interval, gas_prices
+
+
+def setup_mock_eth_provider():
+    DEFAULT_INITIAL_BALANCE = to_wei(10000, 'ether')
+    MOCK_ADDRESS = bytes.fromhex(test_account.address[2:])
+
+    GENESIS_STATE = {
+        MOCK_ADDRESS: {
+            "balance": DEFAULT_INITIAL_BALANCE,
+            "nonce": 0,
+            "code": b'',
+            "storage": {}
+        }
+    }
+
+    eth_tester = EthereumTester(backend=PyEVMBackend(genesis_state=GENESIS_STATE))
+
+    return EthereumTesterProvider(eth_tester)

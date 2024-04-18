@@ -165,6 +165,7 @@ def create_app_account_with_proxies(cex_addresses, encryption, password, private
 
     return app_accounts
 
+
 def validate_cex_addresses(app_accounts, cex_addresses):
     missing_addresses_accounts = []
 
@@ -182,7 +183,7 @@ def validate_cex_addresses(app_accounts, cex_addresses):
 
 
 class AppAccount(Account):
-    def __init__(self, app_id, proxy, account, cex_address, starknet_address, notes):
+    def __init__(self, app_id, proxy, account, cex_address, starknet_address, notes=None):
         self.app_id = app_id
         self.proxy = proxy
         self.address = account.address

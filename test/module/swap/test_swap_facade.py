@@ -14,9 +14,9 @@ class TestSwapFacade(unittest.TestCase):
     def test_shouldGetDex(self):
         logger.info("Test swap facade")
 
-        dex_apps = swap_facade.get_swap_apps_by_chain('BASE')
-        chain_instance = get_chain_instance('BASE')
-        pairs = Pairs(swap_facade).get_pairs_by_tokens('ETH', 'USDC', 'ZKSYNC')
+        dex_apps = swap_facade.get_swap_apps_by_chain('MOCK_CHAIN')
+        chain_instance = get_chain_instance('MOCK_CHAIN')
+        pairs = Pairs(swap_facade).get_pairs_by_tokens('ETH', 'USDC', 'MOCK_CHAIN')
         web3 = init_web3(chain_instance, None)
 
         try:
