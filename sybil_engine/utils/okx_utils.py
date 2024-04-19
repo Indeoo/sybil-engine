@@ -94,16 +94,15 @@ def transfer_from_sub_acc(acc_name, amount, token, cex_data, password):
 def okx_transfer_from_sub_account(okx_secret, cex_data, tokens=['ETH']):
     for acc in get_sub_accounts(cex_data, okx_secret)['data']:
         for token in tokens:
-            okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token)
-            randomized_sleeping({'from': 1, 'to': 1})
+            okx_transfer_token_from_sub_account(acc['subAcct'], cex_data, okx_secret, token)
 
 
-def okx_transfer_token_from_sub_account(acc, cex_data, okx_secret, token):
-    acc_name = acc['subAcct']
+def okx_transfer_token_from_sub_account(acc_name, cex_data, okx_secret, token):
     amount = get_sub_account_balance(acc_name, token, cex_data, okx_secret)
     if amount > 0:
         logger.info(f"Transfer {amount} {token} from {acc_name} to Main account")
         transfer_from_sub_acc(acc_name, amount, token, cex_data, okx_secret)
+        randomized_sleeping({'from': 1, 'to': 1})
 
 
 def get_okx_deposit_addresses(password, cex_data):
