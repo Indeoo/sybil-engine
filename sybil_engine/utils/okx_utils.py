@@ -14,6 +14,7 @@ networks = {
     'POLYGON_BRIDGED': 'Polygon (Bridged)',
     'COREDAO': 'CORE',
     'OPTIMISM': 'Optimism',
+    'X_LAYER': 'X Layer'
 }
 
 
