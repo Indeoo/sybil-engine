@@ -1,7 +1,7 @@
 from binance.error import ClientError
 from binance.spot import Spot
 
-from sybil_engine.domain.cex import CEX
+from sybil_engine.domain.cex.cex import CEX
 from sybil_engine.utils.decryptor import read_cex_data
 
 from sybil_engine.utils.utils import ConfigurationException
@@ -18,7 +18,6 @@ class Binance(CEX):
     def __init__(self, binance_secret, password):
         apiKey, secretKey = read_cex_data(binance_secret, password)
         self.client = Spot(api_key=apiKey, api_secret=secretKey)
-
 
     def withdrawal(self, address, chain, amount, token=['ETH']):
         try:

@@ -2,7 +2,7 @@ import ccxt
 from loguru import logger
 from okx import Funding, SubAccount
 
-from sybil_engine.domain.cex import CEX
+from sybil_engine.domain.cex.cex import CEX
 from sybil_engine.utils.utils import randomized_sleeping
 
 from sybil_engine.utils.decryptor import read_cex_data
@@ -20,10 +20,21 @@ networks = {
 }
 
 
+def log(func):
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if result['code'] != 0:
+            logger.error(result['msg'])
+        return result
+
+    return wrapper
+
+
 class OKX(CEX):
     def __init__(self, cex_data, password):
         self.api_key, self.secret_key, self.passphrase = read_cex_data(cex_data, password)
 
+    @log
     def withdrawal(self, addr, chain, withdraw_amount, token='ETH'):
         flag = "0"
 
@@ -38,7 +49,8 @@ class OKX(CEX):
 
         fee = self._get_withdrawal_fee(token, withdraw_network)
 
-        fundingAPI.withdrawal(ccy=token, amt=withdraw_amount, dest=4, toAddr=addr, fee=fee, chain=withdraw_network)
+        return fundingAPI.withdrawal(ccy=token, amt=withdraw_amount, dest=4, toAddr=addr, fee=fee,
+                                     chain=withdraw_network)
 
     def _get_withdrawal_fee(self, symbol_withdraw, chain_name):
         exchange = ccxt.okx({
@@ -74,7 +86,8 @@ class OKX(CEX):
     def _get_sub_accounts(self):
         flag = "0"  # Production trading: 0, Demo trading: 1
 
-        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, flag, debug=False)
+        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, flag,
+                                                 debug=False)
 
         # Get subaccount list
         return subAccountAPI.get_subaccount_list()
@@ -89,7 +102,8 @@ class OKX(CEX):
     def _get_sub_account_balance(self, acc_name, token):
         flag = "0"
 
-        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, flag, debug=False)
+        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, flag,
+                                                 debug=False)
 
         return float(subAccountAPI.get_funding_balance(acc_name, token)['data'][0]['bal'])
 
