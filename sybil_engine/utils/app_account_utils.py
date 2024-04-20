@@ -5,7 +5,7 @@ from eth_account import Account
 from loguru import logger
 from web3 import Web3
 
-from sybil_engine.utils.cex_utils import get_cex_addresses
+from sybil_engine.domain.cex import get_cex_addresses
 from sybil_engine.utils.csv_reader import read_csv_rows
 from sybil_engine.utils.decryptor import decrypt_private_key
 from sybil_engine.utils.file_loader import load_file_rows
