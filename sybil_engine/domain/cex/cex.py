@@ -8,8 +8,8 @@ class CEX:
         pass
 
 
-    def get_cex_addresses(self, cex_conf):
-        password, cex_data = get_cex_data()
+def get_cex_addresses(cex_conf):
+    password, cex_data = get_cex_data()
 
-        return None
-        #return get_okx_deposit_addresses(password, cex_data[cex_conf]) #+ get_binance_deposit_addresses(password, cex_data['binance'])
+    return None
+    #return get_okx_deposit_addresses(password, cex_data[cex_conf]) #+ get_binance_deposit_addresses(password, cex_data['binance'])
