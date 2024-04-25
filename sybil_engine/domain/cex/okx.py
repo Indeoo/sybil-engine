@@ -33,11 +33,10 @@ def log(func):
 class OKX(CEX):
     def __init__(self, cex_data, password):
         self.api_key, self.secret_key, self.passphrase = read_cex_data(cex_data, password)
+        self.flag = "0"
 
     @log
     def withdrawal(self, addr, chain, withdraw_amount, token='ETH'):
-        flag = "0"
-
         if chain == 'POLYGON' and token == 'USDC':
             network = networks["POLYGON_BRIDGED"]
         else:
@@ -45,9 +44,12 @@ class OKX(CEX):
 
         withdraw_network = token + '-' + network
 
-        fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, flag, debug=False)
+        fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
 
         fee = self._get_withdrawal_fee(token, withdraw_network)
+
+        if withdraw_amount == float(self.get_okx_balance(token)[0]['availBal']):
+            withdraw_amount = withdraw_amount - fee
 
         return fundingAPI.withdrawal(ccy=token, amt=withdraw_amount, dest=4, toAddr=addr, fee=fee,
                                      chain=withdraw_network)
@@ -84,9 +86,7 @@ class OKX(CEX):
                 self._transfer_token_from_sub_account(acc['subAcct'], token)
 
     def _get_sub_accounts(self):
-        flag = "0"  # Production trading: 0, Demo trading: 1
-
-        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, flag,
+        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag,
                                                  debug=False)
 
         # Get subaccount list
@@ -100,24 +100,30 @@ class OKX(CEX):
             randomized_sleeping({'from': 1, 'to': 1})
 
     def _get_sub_account_balance(self, acc_name, token):
-        flag = "0"
-
-        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, flag,
+        subAccountAPI = SubAccount.SubAccountAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag,
                                                  debug=False)
 
         return float(subAccountAPI.get_funding_balance(acc_name, token)['data'][0]['bal'])
 
     def _transfer_from_sub_acc(self, acc_name, amount, token):
-        flag = "0"
-
-        subAccountAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, flag, debug=False)
+        subAccountAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag,
+                                           debug=False)
 
         return subAccountAPI.funds_transfer(token, amount, 6, 6, type='2', subAcct=acc_name)
 
     def get_okx_deposit_addresses(self):
-        flag = "0"
-
-        subAccountAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, flag, debug=False)
-        sub_accounts = subAccountAPI.get_deposit_address('ETH')['data']
+        fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
+        sub_accounts = fundingAPI.get_deposit_address('ETH')['data']
 
         return [sub_account['addr'] for sub_account in sub_accounts]
+
+    def get_okx_deposit_address_for_chain(self, chain):
+        fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
+        depositAddress = fundingAPI.get_deposit_address('ETH')['data']
+
+        return [addr for addr in depositAddress if addr['chain'] == f'ETH-{networks[chain]}']
+
+    def get_okx_balance(self, currencies):
+        fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
+
+        return fundingAPI.get_balances(currencies)['data']
