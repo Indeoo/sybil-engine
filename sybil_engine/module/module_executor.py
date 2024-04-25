@@ -17,7 +17,7 @@ class ModuleExecutor:
             add_accumulator_str("Finished accounts: ", account)
             remove_accumulator_str("Pending accounts: ", account)
         except ConfigurationException as e:
-            raise Exception(f"Configuration error in {module.module_name}: {e}")
+            raise Exception(f"Configuration error in {module.module_name}: {e}") from e
         except Exception as e:
             logger.error(f'Error, skip {account}:')
             print_exception_chain(e)
