@@ -23,7 +23,7 @@ networks = {
 def log(func):
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
-        if result['code'] != 0:
+        if result != None and result['code'] != 0:
             logger.error(result['msg'])
         return result
 
@@ -47,12 +47,16 @@ class OKX(CEX):
         fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
 
         fee = self._get_withdrawal_fee(token, withdraw_network)
+        balance = float(self.get_okx_balance(token)[0]['availBal'])
 
-        if withdraw_amount == float(self.get_okx_balance(token)[0]['availBal']):
+        if withdraw_amount == balance:
             withdraw_amount = withdraw_amount - fee
 
-        return fundingAPI.withdrawal(ccy=token, amt=withdraw_amount, dest=4, toAddr=addr, fee=fee,
-                                     chain=withdraw_network)
+        if withdraw_amount > 0:
+            return fundingAPI.withdrawal(ccy=token, amt=withdraw_amount, dest=4, toAddr=addr, fee=fee,
+                                         chain=withdraw_network)
+        else:
+            return None
 
     def _get_withdrawal_fee(self, symbol_withdraw, chain_name):
         exchange = ccxt.okx({
