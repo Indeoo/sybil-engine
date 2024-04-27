@@ -24,7 +24,7 @@ def log(func):
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
         if result != None and result['code'] != 0:
-            logger.error(result['msg'])
+            logger.error(f"Error code: {result['code']} Message: {result['msg']}")
         return result
 
     return wrapper
