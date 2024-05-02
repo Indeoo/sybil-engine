@@ -8,6 +8,7 @@ from sybil_engine.utils.utils import randomized_sleeping
 from sybil_engine.utils.decryptor import read_cex_data
 
 networks = {
+    'ETHEREUM': 'Ethereum',
     'ZKSYNC': 'zkSync Era',
     'LINEA': 'Linea',
     'ARBITRUM': 'Arbitrum One',
@@ -23,7 +24,7 @@ networks = {
 def log(func):
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
-        if result != None and result['code'] != 0:
+        if result != None or result['code'] != 0:
             logger.error(f"Error code: {result['code']} Message: {result['msg']}")
         return result
 
