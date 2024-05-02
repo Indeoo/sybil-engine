@@ -8,7 +8,7 @@ from sybil_engine.utils.utils import randomized_sleeping
 from sybil_engine.utils.decryptor import read_cex_data
 
 networks = {
-    'ETHEREUM': 'Ethereum',
+    'ETH_MAINNET': 'Ethereum',
     'ZKSYNC': 'zkSync Era',
     'LINEA': 'Linea',
     'ARBITRUM': 'Arbitrum One',
