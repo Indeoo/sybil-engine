@@ -24,7 +24,7 @@ networks = {
 def log(func):
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
-        if result is None or result['code'] != 0:
+        if result is None or result['code'] != '0':
             logger.error(f"Error code: {result['code']} Message: {result['msg']}")
         return result
 
