@@ -1,7 +1,6 @@
 from functools import wraps
 
 from loguru import logger
-from sybil_engine.utils.retry import retry
 from web3 import Web3
 
 from sybil_engine.domain.balance.balance_utils import from_wei_to_eth
@@ -61,11 +60,6 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
     add_fee(chain_instance['gas_token'], transaction_price_wei)
 
     return tx_hash
-
-
-@retry(max_attempts=3, retry_interval={'from': 60 * 1, 'to': 60 * 4})
-def wait_for_transaction(tx_hash, web3):
-    web3.eth.wait_for_transaction_receipt(tx_hash)
 
 
 def evm_starknet_transaction(func):
