@@ -2,8 +2,8 @@ import functools
 
 from loguru import logger
 
-from sybil_engine.utils.tx_utils import TransactionExecutionException
-from sybil_engine.utils.utils import print_exception_chain, randomized_sleeping, SwapException
+from sybil_engine.utils.utils import print_exception_chain, randomized_sleeping, SwapException, \
+    TransactionExecutionException
 
 
 def retry(max_attempts=3, retry_interval={'from': 60 * 5, 'to': 60 * 10}, expected_exception=Exception,
