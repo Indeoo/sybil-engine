@@ -2,7 +2,7 @@ import functools
 
 from loguru import logger
 
-from sybil_engine.contract.transaction_executor import TransactionExecutionException
+from sybil_engine.utils.tx_utils import TransactionExecutionException
 from sybil_engine.utils.utils import print_exception_chain, randomized_sleeping, SwapException
 
 
