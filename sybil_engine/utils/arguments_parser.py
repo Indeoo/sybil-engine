@@ -36,7 +36,7 @@ def parse_arguments(default_password, spreadsheet_id, default_module):
                         help='a string to be processed')
     parser.add_argument('--module', type=str, required=False, default=os.environ.get('MODULE', default_module),
                         help='a string to be processed')
-    parser.add_argument('--cex_conf', type=str, required=False, default=os.environ.get('CEX_CONF', 'okx'),
+    parser.add_argument('--cex_conf', type=str, required=False, default=os.environ.get('CEX_CONF', 'cex'),
                         help='a string to be processed')
     parser.add_argument('--spreadsheet_id', type=str, required=False,
                         default=os.environ.get('SPREADSHEET_ID', spreadsheet_id),
