@@ -42,3 +42,7 @@ class Erc20Contract(Contract):
 
     def decimals(self):
         return self.contract.functions.decimals().call()
+
+    def symbol(self):
+        return self.contract.functions.symbol().call()
+
