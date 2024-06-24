@@ -3,7 +3,7 @@ from web3 import Web3
 
 from sybil_engine.data.networks import get_chain_instance
 from sybil_engine.domain.balance.balance import NotEnoughNativeBalance, Erc20Balance, WETHBalance, NativeBalance
-from sybil_engine.utils.utils import interval_to_round
+from sybil_engine.utils.utils import interval_to_round, ConfigurationException
 
 
 def from_wei_to_eth(wei):
@@ -32,8 +32,12 @@ def verify_balance(min_native_balance, chain_instance, account, web3):
 
 def amount_to_swap_for_pair(account, chain, min_native_balance, native_balance, pair, swap_amount_interval, swap_token,
                             web3):
+    return amount_to_swap_for_pair(account, chain, min_native_balance, native_balance, swap_amount_interval, swap_token, web3)
+
+
+def amount_to_swap_from_interval(account, chain, min_native_balance, native_balance, swap_amount_interval, swap_token, web3):
     if swap_amount_interval == '':
-        swap_amount_interval = pair['amount']
+        raise ConfigurationException(f'swap_amount_interval is empty')
 
     if swap_token == 'ETH':
         amount_to_swap = interval_to_eth_balance(swap_amount_interval, account, chain, web3)
