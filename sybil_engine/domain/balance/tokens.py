@@ -1,5 +1,7 @@
 import inspect
 
+from web3 import Web3
+
 from sybil_engine.contract.erc20contract import Erc20Contract
 from sybil_engine.contract.weth import WETH
 from sybil_engine.data.tokens import get_tokens_for_chain
@@ -11,7 +13,11 @@ class Erc20Token:
         self.chain = chain
         self.token = token
         self.web3 = web3
-        self.erc20_contract = Erc20Contract(get_tokens_for_chain(self.chain)[self.token], self.web3)
+
+        if not Web3.is_address(token):
+            token = get_tokens_for_chain(self.chain)[self.token]
+
+        self.erc20_contract = Erc20Contract(token, self.web3)
 
     def balance(self, account):
         return Erc20Balance(
@@ -36,6 +42,15 @@ class Erc20Token:
 
     def transfer(self, amount, receive_address, account):
         self.erc20_contract.transfer(account, amount, receive_address)
+
+    def symbol(self):
+        if self.erc20_contract.contract_address == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE':
+            return 'ETH'
+        else:
+            return self.erc20_contract.symbol()
+
+    def address(self):
+        return self.erc20_contract.contract_address
 
 
 class WETHToken:
