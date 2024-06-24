@@ -32,7 +32,7 @@ def verify_balance(min_native_balance, chain_instance, account, web3):
 
 def amount_to_swap_for_pair(account, chain, min_native_balance, native_balance, pair, swap_amount_interval, swap_token,
                             web3):
-    return amount_to_swap_for_pair(account, chain, min_native_balance, native_balance, swap_amount_interval, swap_token, web3)
+    return amount_to_swap_from_interval(account, chain, min_native_balance, native_balance, swap_amount_interval, swap_token, web3)
 
 
 def amount_to_swap_from_interval(account, chain, min_native_balance, native_balance, swap_amount_interval, swap_token, web3):
