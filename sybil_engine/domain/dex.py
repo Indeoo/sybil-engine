@@ -8,7 +8,7 @@ from sybil_engine.domain.balance.balance import NotEnoughERC20Balance
 from sybil_engine.domain.balance.tokens import Erc20Token
 from sybil_engine.utils.gas_utils import l1_gas_price
 from sybil_engine.utils.retry import retry_self
-from sybil_engine.utils.utils import SwapException, AccountException, deprecated
+from sybil_engine.utils.utils import SwapException, AccountException
 
 
 class Dex:
@@ -32,15 +32,13 @@ class Dex:
         if amount_to_swap.wei == 0 and amount_to_swap.token != self.chain_instance['gas_token']:
             raise NotEnoughERC20Balance(f"Can't swap {amount_to_swap.log_line()}")
 
-        logger.info(f"Swap {amount_to_swap.log_line()}->{to_token} in {self.dex_name} ({self.chain_instance['chain']})")
+        logger.info(
+            f"Swap {amount_to_swap.log_line()}->{to_token.symbol()} in {self.dex_name} ({self.chain_instance['chain']})")
 
-        from_token_address = self.tokens[from_token]
-        to_token_address = self.tokens[to_token]
-
-        if from_token == 'ETH':
-            args, func = self.swap_native_for_token(account, amount_to_swap, slippage, to_token_address)
+        if from_token.symbol() == 'ETH':
+            args, func = self.swap_native_for_token(account, amount_to_swap, slippage, to_token.address())
         else:
-            erc20_token = Erc20Token(self.chain_instance['chain'], from_token, self.web3)
+            erc20_token = Erc20Token(self.chain_instance['chain'], from_token.address(), self.web3)
             balance = erc20_token.balance(account)
             if balance.wei < amount_to_swap.wei:
                 raise AccountException(f"Balance {balance.log_line()}<-{amount_to_swap.log_line()}")
@@ -50,20 +48,21 @@ class Dex:
             if erc20_token.allowance(account, swap_contract) < amount_to_swap.wei:
                 erc20_token.approve(account, swap_contract)
 
-            if to_token == 'ETH':
-                args, func = self.swap_token_for_native(account, amount_to_swap, from_token_address, slippage)
+            if to_token.symbol() == 'ETH':
+                args, func = self.swap_token_for_native(account, amount_to_swap, from_token.address(), slippage)
             else:
-                args, func = self.swap_token_for_token(account, amount_to_swap, slippage, from_token_address,
-                                                       to_token_address)
+                args, func = self.swap_token_for_token(
+                    account,
+                    amount_to_swap,
+                    slippage,
+                    from_token.address(),
+                    to_token.address()
+                )
 
         if hasattr(func, "__wrapped__"):
             func(*args)
         else:
             execute_transaction(func, args, self.chain_instance, account)
-
-    @deprecated
-    def swap_with_retry(self, amount_to_swap, from_token, to_token, slippage, account):
-        return self.swap(amount_to_swap, from_token, to_token, slippage, account)
 
     def swap_token_for_native(self, account, amount_to_swap, from_token_address, slippage):
         raise SwapException("Not supported yet")

@@ -1,3 +1,5 @@
+from sybil_engine.domain.balance.tokens import Erc20Token
+
 from sybil_engine.utils.utils import ConfigurationException
 
 
@@ -10,6 +12,10 @@ class GenericSwapFacade:
         slippage_coef = 1 - pair['slippage'] * 0.01
 
         dex = self.get_dex(pair, swap_app, chain_instance, web3)
+
+        from_token = Erc20Token(chain_instance['chain'], from_token, web3)
+        to_token = Erc20Token(chain_instance['chain'], to_token, web3)
+
         dex.swap(amount_to_swap, from_token, to_token, slippage_coef, account)
 
     def get_dex(self, pair, swap_app, chain_instance, web3):

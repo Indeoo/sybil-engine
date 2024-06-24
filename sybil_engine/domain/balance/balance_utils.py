@@ -39,7 +39,7 @@ def amount_to_swap_from_interval(account, chain, min_native_balance, native_bala
     if swap_amount_interval == '':
         raise ConfigurationException(f'swap_amount_interval is empty')
 
-    if swap_token == 'ETH':
+    if swap_token == 'ETH' or swap_token == '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE':
         amount_to_swap = interval_to_eth_balance(swap_amount_interval, account, chain, web3)
 
         if swap_amount_interval == 'all_balance':
