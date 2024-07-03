@@ -1,3 +1,5 @@
+import random
+
 from sybil_engine.data.networks import get_chain_instance, get_ids_chain
 
 
@@ -18,7 +20,8 @@ class Contract:
         }
 
         if not self.chain_instance['eip1599']:
-            txn_data['gasPrice'] = int(self.web3.eth.gas_price * 1.2)
+            random_multiplier = random.uniform(1.1, 1.2)
+            txn_data['gasPrice'] = int(self.web3.eth.gas_price * random_multiplier)
 
         if set_contract_address:
             txn_data['to'] = self.contract_address
