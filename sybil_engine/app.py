@@ -8,8 +8,10 @@ from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_st
 from sybil_engine.utils.app_account_utils import create_app_account
 from sybil_engine.utils.arguments_parser import parse_arguments, parse_profile
 from sybil_engine.utils.configuration_loader import load_config_maps, load_module_vars
+from sybil_engine.utils.duplicate_utils import check_duplicates
 from sybil_engine.utils.fee_storage import print_fee
 from sybil_engine.utils.logs import load_logger
+from sybil_engine.utils.package_import_utils import import_all_variables_from_directory
 from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot
 from sybil_engine.utils.utils import ConfigurationException
 
@@ -22,41 +24,14 @@ def prepare_launch_without_data(modules_data_file):
 
     set_telegram_api_chat_id(config_map['telegram_api_chat_id'])
     set_telegram_api_key(config_map['telegram_api_key'])
-
-    if 'shell_mode' not in config_map:
-        config_map['shell_mode'] = 'classic'
-
-    if 'account_creation_mode' not in config_map:
-        config_map['account_creation_mode'] = 'TXT'
-
-    if 'cex_address_validation' not in config_map:
-        config_map['cex_address_validation'] = False
-
-    if 'interactive_confirmation' not in config_map:
-        config_map['interactive_confirmation'] = True
-    if 'spreadsheet_id' not in config_map:
-        config_map['spreadsheet_id'] = None
+    setup_default_config(config_map)
 
     args = parse_arguments(config_map['password'], config_map['spreadsheet_id'], module_map['module'])
 
-    if config_map['shell_mode'] == 'interactive':
-        logger.info("Choose module (by id):")
-
-        for module_id, module in modules_data.get_module_map().items():
-            module_name = get_module_name(module)
-            logger.info(f"  {module_id} {module_name}")
-
-        choice = input()
-        selected_module = modules_data.get_module_map()[int(choice)]
-        module_name = get_module_name(selected_module)
-    else:
-        module_name = args.module
-
-    module_config = module_map['scenario_config'] if module_name == 'SCENARIO' else {
-        'scenario_name': module_name,
-        'scenario': [
-            {'module': module_name, 'params': modules_data.get_module_config_by_name(module_name, module_map)}]
-    }
+    try:
+        scenario = load_scenario(args, config_map, module_map, modules_data)
+    except ValueError as e:
+        return
 
     config = (
         modules_data,
@@ -72,7 +47,60 @@ def prepare_launch_without_data(modules_data_file):
         config_map['interactive_confirmation']
     )
 
-    launch_app(args, module_config, config)
+    launch_app(args, scenario, config)
+
+
+def setup_default_config(config_map):
+    defaults = {
+        'shell_mode': 'classic',
+        'account_creation_mode': 'TXT',
+        'cex_address_validation': False,
+        'interactive_confirmation': True,
+        'spreadsheet_id': None
+    }
+
+    for key, value in defaults.items():
+        config_map.setdefault(key, value)
+
+
+def load_scenario(args, config_map, module_map, modules_data):
+    modules = []
+
+    for module in modules_data.get_modules():
+        module_name = module.module_name
+        modules.append(
+            {
+                'scenario_name': module_name,
+                'scenario': [
+                    {'module': module_name, 'params': modules_data.get_module_config_by_name(module_name, module_map)}]
+            }
+        )
+    modules_scenario_map = {
+        module_scenario['scenario_name']: module_scenario for module_scenario in
+        load_scenarios() + modules
+    }
+    if config_map['shell_mode'] == 'interactive':
+        logger.info("Choose module (by id) or scenario (by name):")
+
+        for module_id, module in modules_data.get_module_map().items():
+            module_name = get_module_name(module)
+            logger.info(f"  {module_id} {module_name}")
+
+        for scenario in load_scenarios():
+            logger.info(f"  {scenario['scenario_name']}")
+
+        choice = input()
+
+        if choice.isdigit():
+            selected_module = modules_data.get_module_map()[int(choice)]
+            module_name = get_module_name(selected_module)
+        else:
+            module_name = choice
+    else:
+        module_name = args.module
+    scenario = modules_scenario_map[module_name]
+
+    return scenario
 
 
 def get_module_name(module):
@@ -126,3 +154,11 @@ def proceed_accounts(accounts, execution_plans, sleep_interval):
     for index, (account, modules) in execution_plans:
         logger.info(f"[{index}/{len(accounts)}][{account.app_id}] {account.address}")
         ModuleExecutor().execute_modules(modules, account, sleep_interval)
+
+
+def load_scenarios():
+    scenarios_path = 'data/scenarios'
+    scenarios = import_all_variables_from_directory(scenarios_path)
+    check_duplicates(scenarios, 'scenario_name')
+
+    return scenarios
