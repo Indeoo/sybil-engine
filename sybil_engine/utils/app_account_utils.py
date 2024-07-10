@@ -32,7 +32,7 @@ def create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_
         if args.spreadsheet_id is None:
             raise Exception(f"account_creation_mode is GOOGLE, spreadsheet_id is required in config")
 
-        wallets = args.wallet.split(",") if "," in args.wallet else [args.wallet]
+        wallets = args.wallet.split(",") if "," in args.wallets else [args.wallet]
         rows = []
 
         for wallet in wallets:
