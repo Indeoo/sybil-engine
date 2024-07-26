@@ -4,7 +4,7 @@ from sybil_engine.data.contracts import get_contracts_for_chain
 from sybil_engine.data.networks import get_chain_instance
 
 from sybil_engine.utils.accumulator import add_accumulator_str, remove_accumulator_str
-from sybil_engine.utils.scan_utils import find_interacted_contracts
+from sybil_engine.utils.scan_utils import find_interacted_contracts, find_interacted_data
 from sybil_engine.utils.utils import randomized_sleeping, ModuleException, print_exception_chain, \
     ConfigurationException, RetryException
 
@@ -36,6 +36,12 @@ class ModuleExecutor:
                     chain_instance['api_scan_key']
                 )
 
+                data = find_interacted_data(
+                    account.address,
+                    chain_instance['api_scan'],
+                    chain_instance['api_scan_key']
+                )
+
                 if 'contract' in args:
                     contract_address = module_args['contract']
                 elif module.module_name == 'SEND_TO_CEX':
@@ -44,6 +50,10 @@ class ModuleExecutor:
                     contract_address = get_contracts_for_chain(chain)[module.module_name]
 
                 if contract_address in interactions:
+                    logger.info(f"{module.log()} already minted for {account.address}")
+                    return
+
+                if data in interactions:
                     logger.info(f"{module.log()} already minted for {account.address}")
                     return
 
