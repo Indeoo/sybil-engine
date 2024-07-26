@@ -49,11 +49,7 @@ class ModuleExecutor:
                 else:
                     contract_address = get_contracts_for_chain(chain)[module.module_name]
 
-                if contract_address in interactions:
-                    logger.info(f"{module.log()} already minted for {account.address}")
-                    return
-
-                if data in interactions:
+                if contract_address in interactions and data in interactions:
                     logger.info(f"{module.log()} already minted for {account.address}")
                     return
 
