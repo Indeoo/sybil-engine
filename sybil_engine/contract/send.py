@@ -15,7 +15,8 @@ class Send(Contract):
         txn_params = self.build_generic_data(sender, False)
         txn_params['value'] = amount_to_swap.wei
         txn_params['gasPrice'] = int(self.web3.eth.gas_price * random.uniform(1.1, 1.2))
-        txn_params['to'] = Web3.to_checksum_address(to_address)
+        if txn_params['to'] is not None:
+            txn_params['to'] = Web3.to_checksum_address(to_address)
         if data is not None:
             txn_params['data'] = data
 
