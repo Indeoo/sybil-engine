@@ -41,7 +41,7 @@ def execute_transaction_internal(func, args, chain_instance, account, web3=None)
             contract_txn['gas'] = web3.eth.estimate_gas(contract_txn)
 
         signed_txn = account.sign_transaction(contract_txn, private_key=account.key)
-        tx_hash = web3.eth.send_raw_transaction(signed_txn.rawTransaction)
+        tx_hash = web3.eth.send_raw_transaction(signed_txn.raw_transaction)
 
         randomized_sleeping(chain_instance['transaction_sleep_interval'])
         wait_for_transaction(tx_hash, web3)

@@ -3,7 +3,7 @@ setuptools==69.5.1
 ccxt==4.2.100
 tqdm==4.66.2
 cryptography==42.0.5
-web3==6.17.2
+web3==7.2.0
 requests==2.31.0
 pyTelegramBotAPI==4.17.0
 python-okx==0.2.8
@@ -15,5 +15,5 @@ google-api-python-client==2.126.0
 google-auth-httplib2==0.2.0
 google-auth-oauthlib==1.2.0
 eth-tester==0.10.0b4
-py-evm==0.10.0b6
+py-evm==0.10.1b2
 fake-useragent==1.4.0
