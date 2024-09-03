@@ -1,12 +1,13 @@
 import random
 from typing import Optional, Any
 
+from sybil_engine.config.app_config import get_network
 import requests
+from eth_tester import EthereumTester, PyEVMBackend
 from loguru import logger
 from requests.adapters import HTTPAdapter
 from urllib3 import Retry
-from web3 import Web3
-from web3.middleware import geth_poa_middleware
+from web3 import Web3, EthereumTesterProvider
 
 from sybil_engine.data.networks import get_chain_instance
 from sybil_engine.domain.balance.balance_utils import get_native_balance, find_chain_with_max_usdc, \
@@ -35,10 +36,14 @@ def init_web3(chain_instance, proxy: Optional[Any]):
     else:
         provider = Web3.HTTPProvider(endpoint_uri=chain_instance['rpc'], session=session)
 
+    if get_network() == 'LOCAL':
+        eth_tester = EthereumTester(PyEVMBackend())
+        provider = EthereumTesterProvider(eth_tester)
+
     web3 = Web3(provider=provider)
 
     if chain_instance['poa']:
-        web3.middleware_onion.inject(geth_poa_middleware, layer=0)
+        web3.middleware_onion.inject(web3.middleware.GasPriceStrategyMiddleware, layer=0)
 
     return web3
 
