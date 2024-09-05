@@ -1,3 +1,4 @@
+from sybil_engine.config.app_config import set_network
 from sybil_engine.module.modules import Modules
 from test.module.mock_fail_module import MockFailModule
 from test.module.mock_module import MockModule
@@ -12,3 +13,4 @@ module_map = {
 swap_apps = ['RepeatableMockModule', 'MockModule', 'MockFailModule']
 
 test_modules = Modules(module_map, swap_apps)
+set_network('LOCAL')

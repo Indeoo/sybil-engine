@@ -1,20 +1,20 @@
-from sybil_engine.domain.generic_swap_facade import GenericSwapFacade
+from sybil_engine.domain.swap_facade import SwapFacade
 from test.module.swap.mock_dex import MockFailDex
 
 
-class MockTestSwapFacade(GenericSwapFacade):
+class MockTestSwapFacade(SwapFacade):
     def __init__(self, dex_classes, swap_apps):
         super().__init__(dex_classes, swap_apps)
 
-    def get_dex_classes(self, pair):
+    def get_dex_classes(self):
         return {
-            MockFailDex.dex_name: (MockFailDex, {})
+            MockFailDex
         }
 
 
 swap_facade = MockTestSwapFacade(
     {
-        MockFailDex.dex_name: (MockFailDex, {})
+        MockFailDex
     },
     {
         MockFailDex: ['ZKSYNC', 'LINEA']

@@ -36,9 +36,9 @@ def init_web3(chain_instance, proxy: Optional[Any]):
     else:
         provider = Web3.HTTPProvider(endpoint_uri=chain_instance['rpc'], session=session)
 
-    if get_network() == 'LOCAL':
-        eth_tester = EthereumTester(PyEVMBackend())
-        provider = EthereumTesterProvider(eth_tester)
+    # if get_network() == 'LOCAL':
+    #     eth_tester = EthereumTester(PyEVMBackend())
+    #     provider = EthereumTesterProvider(eth_tester)
 
     web3 = Web3(provider=provider)
 
