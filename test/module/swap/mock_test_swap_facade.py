@@ -3,8 +3,8 @@ from test.module.swap.mock_dex import MockFailDex
 
 
 class MockTestSwapFacade(SwapFacade):
-    def __init__(self, dex_classes, swap_apps):
-        super().__init__(dex_classes, swap_apps)
+    def __init__(self, dex_classes):
+        super().__init__(dex_classes)
 
     def get_dex_classes(self):
         return {
@@ -13,9 +13,6 @@ class MockTestSwapFacade(SwapFacade):
 
 
 swap_facade = MockTestSwapFacade(
-    {
-        MockFailDex
-    },
     {
         MockFailDex: ['ZKSYNC', 'LINEA']
     }
