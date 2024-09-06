@@ -43,7 +43,8 @@ def init_web3(chain_instance, proxy: Optional[Any]):
     web3 = Web3(provider=provider)
 
     if chain_instance['poa']:
-        web3.middleware_onion.inject(web3.middleware.GasPriceStrategyMiddleware, layer=0)
+        from web3.middleware import GasPriceStrategyMiddleware
+        web3.middleware_onion.inject(GasPriceStrategyMiddleware, layer=0)
 
     return web3
 
