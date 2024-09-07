@@ -28,7 +28,7 @@ class Modules:
         return [module[0] for module in self.get_module_map().values()]
 
     def get_module_map(self):
-        return self.module_map
+        return {key: (module_class, module_class.module_config) for key, module_class in self.module_map.items()}
 
     def get_swap_apps(self):
         return self.swap_facade.get_swap_apps()
