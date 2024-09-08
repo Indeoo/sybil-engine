@@ -29,9 +29,9 @@ class SwapFacade:
         return [swap_app_name.dex_name for swap_app_name in self.get_all_swap_apps()]
 
     def get_swap_apps_by_chain(self, chain_name):
-        filtered_apps = {app: chains for app, chains in self.get_all_swap_apps().items() if chain_name in chains}
+        filtered_apps = {swap_app for swap_app in self.get_all_swap_apps() if chain_name in swap_app.supported_chains}
 
-        return [swap_app_name.dex_name for swap_app_name in filtered_apps.keys()]
+        return [swap_app_name.dex_name for swap_app_name in filtered_apps]
 
     def get_all_swap_apps(self):
         return self.dex_classes
