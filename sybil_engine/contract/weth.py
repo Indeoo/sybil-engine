@@ -15,7 +15,7 @@ class WETH(Contract):
 
         txn_params = self.build_generic_data(sender)
         txn_params['value'] = amount_to_swap.wei
-        txn_params['data'] = self.contract.encodeABI("deposit")
+        txn_params['data'] = self.contract.encode_abi("deposit")
         txn_params['gasPrice'] = self.web3.eth.gas_price
 
         return txn_params
@@ -25,7 +25,7 @@ class WETH(Contract):
         sender = account.address
 
         txn_params = self.build_generic_data(sender)
-        txn_params['data'] = self.contract.encodeABI("withdraw", args=(amount_to_swap.wei,))
+        txn_params['data'] = self.contract.encode_abi("withdraw", args=(amount_to_swap.wei,))
 
         return txn_params
 
