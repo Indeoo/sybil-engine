@@ -17,3 +17,4 @@ google-auth-oauthlib==1.2.0
 eth-tester==0.10.0b4
 py-evm==0.10.1b2
 fake-useragent==1.4.0
+Faker~=27.0.0
