@@ -14,9 +14,17 @@ from sybil_engine.utils.logs import load_logger
 from sybil_engine.utils.package_import_utils import import_all_variables_from_directory
 from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot
 from sybil_engine.utils.utils import ConfigurationException
+import pkgutil
+import importlib
 
 
 def prepare_launch_without_data(modules_data_file):
+    modules_package = modules_data_file.replace("/modules.py", "").replace("/", ".")
+    package = importlib.import_module(modules_package)
+
+    for loader, module_name, is_pkg in pkgutil.walk_packages(path=package.__path__):
+        importlib.import_module('.' + module_name, package=modules_package)
+
     config_map, module_map = load_config_maps()
     modules_data = load_module_vars(modules_data_file)['modules_data']
 
