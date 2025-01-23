@@ -1,5 +1,7 @@
+from loguru import logger
 from sybil_engine.config.app_config import get_network
 from sybil_engine.data.networks import get_networks
+from sybil_engine.module.module import Module
 
 
 class Modules:
@@ -31,7 +33,11 @@ class Modules:
         return [module[0] for module in self.get_module_map().values()]
 
     def get_module_map(self):
-        return {key: (module_class, module_class.module_config) for key, module_class in self.module_map.items()}
+        module_map = {}
+        for cls in Module.__subclasses__():
+            if cls.__name__ != "RepeatableModule":
+                module_map[cls.module_name] = (cls, cls.module_config)
+        return module_map
 
     def get_swap_apps(self):
         return self.swap_facade.get_swap_apps()
