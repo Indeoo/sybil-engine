@@ -13,7 +13,10 @@ class Modules:
                 if config is None:
                     return {}
                 elif isinstance(config, str):
-                    return module_map[config]
+                    if config in module_map:
+                        return module_map[config]
+                    else:
+                        return "{}"
                 else:
                     return config
         return 0
