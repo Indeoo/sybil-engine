@@ -1,3 +1,4 @@
+from loguru import logger
 from sybil_engine.config.app_config import get_network
 from sybil_engine.data.networks import get_networks
 from sybil_engine.module.module import Module
