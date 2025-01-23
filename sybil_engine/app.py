@@ -4,7 +4,7 @@ from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_
     set_cex_data, set_cex_conf
 from sybil_engine.module.execution_planner import create_execution_plans
 from sybil_engine.module.module_executor import ModuleExecutor
-from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str
+from sybil_engine.utils.accumulator import print_accumulated, add_accumulator_str, add_accumulator
 from sybil_engine.utils.app_account_utils import create_app_account
 from sybil_engine.utils.arguments_parser import parse_arguments, parse_profile
 from sybil_engine.utils.configuration_loader import load_config_maps, load_module_vars
@@ -138,6 +138,7 @@ def launch_app(args, module_config, config):
         raise ConfigurationException("Non-existing module is used")
 
     accounts = create_app_account(args, encryption, proxy_mode, account_creation_mode, cex_address_validation)
+    add_accumulator("Acc Amount", len(accounts))
 
     execution_plans = create_execution_plans(accounts, min_native_interval, module_config, modules_data)
 
