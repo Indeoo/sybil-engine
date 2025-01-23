@@ -1,4 +1,3 @@
-from loguru import logger
 from sybil_engine.config.app_config import get_network
 from sybil_engine.data.networks import get_networks
 from sybil_engine.module.module import Module
@@ -6,7 +5,6 @@ from sybil_engine.module.module import Module
 
 class Modules:
     def __init__(self, module_map, swap_facade):
-        self.module_map = module_map
         self.swap_facade = swap_facade
 
     def get_module_config_by_name(self, module_name, module_map):
