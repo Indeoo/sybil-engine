@@ -12,7 +12,7 @@ from sybil_engine.utils.duplicate_utils import check_duplicates
 from sybil_engine.utils.fee_storage import print_fee
 from sybil_engine.utils.logs import load_logger
 from sybil_engine.utils.package_import_utils import import_all_variables_from_directory
-from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot
+from sybil_engine.utils.telegram import set_telegram_api_chat_id, set_telegram_api_key, send_to_bot, add_config
 from sybil_engine.utils.utils import ConfigurationException
 import pkgutil
 import importlib
@@ -32,6 +32,15 @@ def prepare_launch_without_data(modules_data_file):
 
     set_telegram_api_chat_id(config_map['telegram_api_chat_id'])
     set_telegram_api_key(config_map['telegram_api_key'])
+
+    add_config("STATISTICS_MODE", "CSV")
+
+    if "statistic_config" in config_map:
+        if "mode" in config_map['statistic_config']:
+            add_config("STATISTICS_MODE", config_map['statistic_config']['mode'])
+        if "spreadsheet_id" in config_map['statistic_config']:
+            add_config("SPREADSHEET_ID", config_map['statistic_config']['spreadsheet_id'])
+
     setup_default_config(config_map)
 
     args = parse_arguments(config_map['password'], config_map['spreadsheet_id'], module_map['module'])
