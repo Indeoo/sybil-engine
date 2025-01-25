@@ -47,12 +47,12 @@ class CsvStatisticsWriter(StatisticsWriter):
 
 
 class GoogleStatisticsWriter(StatisticsWriter):
-    SERVICE_ACCOUNT_FILE = 'data/service-accounts.json'
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-    credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
-    service = build('sheets', 'v4', credentials=credentials)
-
     def __init__(self, sheet):
+        self.SERVICE_ACCOUNT_FILE = 'data/service-accounts.json'
+        self.SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
+        self.credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+        self.service = build('sheets', 'v4', credentials=credentials)
+
         self.sheet = sheet
 
     def init_if_required(self, sheet_name, header):
