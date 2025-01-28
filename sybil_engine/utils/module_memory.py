@@ -8,10 +8,9 @@ def add_memory_list(key, value):
 
 
 def accumulate_by_key(key, value):
-    if key in memory:
-        memory[key] += value
-    else:
-        memory[key] = [value]
+    if key not in memory:
+        memory[key] = []
+    memory[key] += value
 
 
 def remove_key(key):
