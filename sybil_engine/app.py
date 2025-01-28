@@ -25,8 +25,12 @@ def prepare_launch_without_data(modules_package):
         if not is_pkg:
             importlib.import_module('.' + module_name, package=modules_package)
 
-    config_map, module_map = load_config_maps()
     modules_data = load_module_vars(modules_package)['modules_data']
+    launch_with_data(modules_data)
+
+
+def launch_with_data(modules_data):
+    config_map, module_map = load_config_maps()
 
     load_logger(send_to_bot, config_map['telegram_enabled'], config_map['telegram_log_level'])
 
