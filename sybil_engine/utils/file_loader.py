@@ -21,7 +21,6 @@ def load_abi(path):
             if os.path.exists(os.path.join(caller_dir, 'resources')):
                 break
             caller_dir = os.path.dirname(caller_dir)
-        print(f"The project root is: {caller_dir}")
         # Combine the caller's directory with the provided relative path.
         absolute_path = os.path.join(caller_dir, path)
         with open(absolute_path) as f:
