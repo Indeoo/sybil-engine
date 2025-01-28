@@ -22,7 +22,8 @@ def prepare_launch_without_data(modules_package):
     package = importlib.import_module(modules_package)
 
     for loader, module_name, is_pkg in pkgutil.walk_packages(path=package.__path__):
-        importlib.import_module('.' + module_name, package=modules_package)
+        if not is_pkg:
+            importlib.import_module('.' + module_name, package=modules_package)
 
     config_map, module_map = load_config_maps()
     modules_data = load_module_vars(modules_package)['modules_data']
