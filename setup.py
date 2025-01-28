@@ -9,7 +9,7 @@ setup(
     py_modules=['sybil_engine'],
     packages=find_packages(),
     package_data={
-        '': ['resources/**/*'],
+        'sybil_engine': ['resources/**/*'],
     },
     install_requires=requirements,
     data_files=[('', ['requirements.txt'])],
