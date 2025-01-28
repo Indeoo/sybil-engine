@@ -19,4 +19,4 @@ def remove_key(key):
 
 
 def get_by_key(key):
-    return memory[key]
+    return memory.get(key)
