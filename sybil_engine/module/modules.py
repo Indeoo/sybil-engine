@@ -1,6 +1,6 @@
 from sybil_engine.config.app_config import get_network
 from sybil_engine.data.networks import get_networks
-from sybil_engine.module.module import Module
+from sybil_engine.module.module import Module, RepeatableModule
 
 
 class Modules:
@@ -32,7 +32,7 @@ class Modules:
 
     def get_module_map(self):
         module_map = {}
-        for cls in Module.__subclasses__():
+        for cls in Module.__subclasses__() + RepeatableModule.__subclasses__():
             if cls.__name__ != "RepeatableModule":
                 module_map[cls.module_name] = (cls, cls.module_config)
         return module_map
