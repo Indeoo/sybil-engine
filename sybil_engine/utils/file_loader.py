@@ -9,9 +9,18 @@ def load_file_rows(path):
         return [row.strip() for row in f]
 
 
+import os
+
+
 def load_abi(path):
-    with open(path) as f:
-        return f.read()
+    try:
+        absolute_path = os.path.join(os.path.dirname(__file__), path)
+        with open(absolute_path) as f:
+            return f.read()
+    except FileNotFoundError:
+        print(f"No file found at {path}")
+        return None
+
 
 
 def load_json_resource(path):
