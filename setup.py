@@ -8,6 +8,9 @@ setup(
     version='10.0.6',
     py_modules=['sybil_engine'],
     packages=find_packages(),
+    package_data={
+        '': ['resources/**/*'],
+    },
     install_requires=requirements,
     data_files=[('', ['requirements.txt'])],
     author='Indeoo',
