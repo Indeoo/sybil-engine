@@ -1,19 +1,13 @@
 import json
 
 from loguru import logger
-
+import os
+import inspect
 
 def load_file_rows(path):
     with open(path, "r") as f:
         logger.info(f"Reading {path}")
         return [row.strip() for row in f]
-
-
-import os
-
-
-import os
-import inspect
 
 
 def load_abi(path):
@@ -24,7 +18,7 @@ def load_abi(path):
         caller_dir = os.path.dirname(caller_path)
         # Go up in directory structure until you find setup.py or reach the root
         while caller_dir != os.path.dirname(caller_dir):
-            if os.path.exists(os.path.join(caller_dir, 'setup.py')):
+            if os.path.exists(os.path.join(caller_dir, 'resources')):
                 break
             caller_dir = os.path.dirname(caller_dir)
         print(f"The project root is: {caller_dir}")
