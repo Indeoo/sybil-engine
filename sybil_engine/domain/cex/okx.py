@@ -1,6 +1,9 @@
 import ccxt
 from loguru import logger
 from okx import Funding, SubAccount
+from okx.Account import AccountAPI
+from okx.MarketData import MarketAPI
+from okx.exceptions import OkxAPIException
 
 from sybil_engine.domain.cex.cex import CEX
 from sybil_engine.utils.utils import randomized_sleeping
@@ -132,3 +135,99 @@ class OKX(CEX):
         fundingAPI = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
 
         return fundingAPI.get_balances(currencies)['data']
+
+    def get_total_balance_in_usd(self):
+        # Initialize clients – note the separate Funding API for the funding account
+        account_client = AccountAPI(
+            api_key=self.api_key,
+            api_secret_key=self.secret_key,
+            passphrase=self.passphrase,
+            flag="0",  # 0: Live trading, 1: Demo trading
+            debug=False
+        )
+        market_client = MarketAPI(flag="0")
+        funding_client = Funding.FundingAPI(self.api_key, self.secret_key, self.passphrase, False, self.flag, debug=False)
+
+        try:
+            # Get trading account balance (includes details and total equity)
+            trading_result = account_client.get_account_balance()
+            if trading_result.get('code') != '0':
+                print(f"Error fetching trading balance: {trading_result.get('msg')}")
+                return None
+            trading_data = trading_result.get('data', [{}])[0]
+            trading_details = trading_data.get('details', [])
+
+            # Get funding account balance using the Funding API
+            # (Note: if FundingAPI is not async, you might need to run it in an executor)
+            funding_result = funding_client.get_balances()  # assume async support
+            if funding_result.get('code') != '0':
+                print(f"Error fetching funding balance: {funding_result.get('msg')}")
+                funding_balances = []
+            else:
+                funding_balances = funding_result.get('data', [])
+
+            # Get tickers to build a price lookup (only SPOT tickers used here)
+            tickers_result = market_client.get_tickers('SPOT')
+            if tickers_result.get('code') != '0':
+                print(f"Error fetching tickers: {tickers_result.get('msg')}")
+                return None
+            price_lookup = {}
+            for ticker in tickers_result.get('data', []):
+                symbol = ticker.get('instId', '')
+                if symbol.endswith('-USDT') or symbol.endswith('-USDC') or symbol.endswith('-USD'):
+                    base_currency = symbol.split('-')[0].upper()
+                    price_lookup[base_currency] = float(ticker.get('last', 0))
+            # Ensure stablecoins convert 1:1
+            for stable in ['USDT', 'USDC', 'USD', 'DAI', 'BUSD']:
+                price_lookup[stable] = 1.0
+
+            total_usd_value = 0.0
+            assets_details = []
+
+            # Process trading account assets
+            for asset in trading_details:
+                currency = asset.get('ccy', '').upper()
+                # For trading account, OKX uses cashBal to indicate available balance
+                balance = float(asset.get('cashBal', 0))
+                if balance > 0:
+                    # Try price lookup; if not found, attempt alternative key
+                    usd_value = balance * (price_lookup.get(currency) or price_lookup.get(f"{currency}-USDT") or 0)
+                    assets_details.append({
+                        'currency': currency,
+                        'balance': balance,
+                        'usd_value': usd_value,
+                        'account': 'Trading'
+                    })
+                    total_usd_value += usd_value
+
+            # Process funding account assets
+            for asset in funding_balances:
+                currency = asset.get('ccy', '').upper()
+                available = float(asset.get('availBal', 0))
+                frozen = float(asset.get('frozenBal', 0))
+                balance = available + frozen
+                if balance > 0:
+                    usd_value = balance * (price_lookup.get(currency) or price_lookup.get(f"{currency}-USDT") or 0)
+                    assets_details.append({
+                        'currency': currency,
+                        'balance': balance,
+                        'usd_value': usd_value,
+                        'account': 'Funding'
+                    })
+                    total_usd_value += usd_value
+
+            # Use the reported total equity from the trading account (if desired)
+            reported_total = float(trading_data.get('totalEq', '0'))
+
+            return {
+                'calculated_total_usd': total_usd_value,
+                'reported_total_usd': reported_total,
+                'assets': sorted(assets_details, key=lambda x: x['usd_value'], reverse=True)
+            }
+
+        except OkxAPIException as e:
+            print(f"API Error: {e}")
+            return None
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+            return None
