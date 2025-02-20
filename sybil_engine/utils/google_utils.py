@@ -11,9 +11,7 @@ from loguru import logger
 
 def get_google_spreadsheet(spreadsheet_id, sheet_name):
     # Spreadsheet details
-    # Authenticate and construct service
-    credentials = Credentials.from_service_account_info(json.loads(os.environ['GOOGLE_SERVICE_ACCOUNT']))
-    service = build('sheets', 'v4', credentials=credentials)
+    service = build('sheets', 'v4', credentials=get_google_credentials())
 
     # Call the Sheets API to fetch data
     sheet = service.spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=sheet_name).execute()
@@ -35,3 +33,7 @@ def get_google_spreadsheet(spreadsheet_id, sheet_name):
     csv_file_like.close()
 
     return rows
+
+
+def get_google_credentials():
+    return Credentials.from_service_account_info(json.loads(os.environ['GOOGLE_SERVICE_ACCOUNT']))
