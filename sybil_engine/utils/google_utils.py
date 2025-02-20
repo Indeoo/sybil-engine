@@ -1,3 +1,6 @@
+import json
+import os
+
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 import io
@@ -7,13 +10,9 @@ from loguru import logger
 
 
 def get_google_spreadsheet(spreadsheet_id, sheet_name):
-    # Define the scope
-    SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-    # Path to your service account key file
-    SERVICE_ACCOUNT_FILE = 'data/service-accounts.json'
     # Spreadsheet details
     # Authenticate and construct service
-    credentials = Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    credentials = Credentials.from_service_account_info(json.loads(os.environ['GOOGLE_SERVICE_ACCOUNT']))
     service = build('sheets', 'v4', credentials=credentials)
 
     # Call the Sheets API to fetch data
