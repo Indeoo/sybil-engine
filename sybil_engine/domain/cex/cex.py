@@ -7,6 +7,9 @@ class CEX:
     def transfer_from_sub_account(self, tokens=['ETH']):
         pass
 
+    def get_asset_valuation(self):
+        pass
+
 
 def get_cex_addresses(cex_conf):
     password, cex_data = get_cex_data()
