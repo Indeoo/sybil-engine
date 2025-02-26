@@ -1,3 +1,5 @@
+import os
+
 from loguru import logger
 
 from sybil_engine.config.app_config import set_network, set_gas_prices, set_dex_retry_interval, set_module_data, \
@@ -180,7 +182,10 @@ def proceed_accounts(accounts, execution_plans, sleep_interval):
 
 def load_scenarios():
     scenarios_path = 'data/scenarios'
-    scenarios = import_all_variables_from_directory(scenarios_path)
-    check_duplicates(scenarios, 'scenario_name')
+    if os.path.exists(scenarios_path) and os.path.isdir(scenarios_path):
+        scenarios = import_all_variables_from_directory(scenarios_path)
+        check_duplicates(scenarios, 'scenario_name')
 
-    return scenarios
+        return scenarios
+    else:
+        return []
